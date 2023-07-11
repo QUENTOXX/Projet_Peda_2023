@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : lun. 10 juil. 2023 à 13:42
+-- Généré le : mar. 11 juil. 2023 à 07:43
 -- Version du serveur : 5.7.40
 -- Version de PHP : 8.0.26
 
@@ -74,6 +74,8 @@ CREATE TABLE IF NOT EXISTS `livreur` (
   `Prénom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Nom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Cmd_a_Livrer` int(11) NOT NULL,
+  `Adresse_Last_Livraison` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Last_Cmd_Livree` date NOT NULL,
   KEY `Cmd_a_Livrer` (`Cmd_a_Livrer`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
