@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : mar. 11 juil. 2023 à 08:28
+-- Généré le : mar. 11 juil. 2023 à 13:00
 -- Version du serveur : 5.7.40
 -- Version de PHP : 8.0.26
 
@@ -33,7 +33,8 @@ CREATE TABLE IF NOT EXISTS `client` (
   `Nom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Mail` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Adresse` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `Date_contrat` date NOT NULL
+  `Date_contrat` date NOT NULL,
+  `Mot_de_Passe` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -123,6 +124,7 @@ CREATE TABLE IF NOT EXISTS `livreur` (
   `Adresse` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Permis` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Type_Véhicule` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `Temps_Tournee` time NOT NULL,
   KEY `Cmd_a_Livrer` (`Cmd_a_Livrer`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
