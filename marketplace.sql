@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Hôte : 127.0.0.1:3306
--- Généré le : mar. 11 juil. 2023 à 13:00
+-- Généré le : mer. 12 juil. 2023 à 08:31
 -- Version du serveur : 5.7.40
 -- Version de PHP : 8.0.26
 
@@ -34,7 +34,9 @@ CREATE TABLE IF NOT EXISTS `client` (
   `Mail` varchar(100) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Adresse` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Date_contrat` date NOT NULL,
-  `Mot_de_Passe` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL
+  `Mot_de_Passe` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -69,6 +71,18 @@ CREATE TABLE IF NOT EXISTS `commande` (
   PRIMARY KEY (`Client`),
   UNIQUE KEY `ID` (`ID`),
   KEY `Vendeur` (`Vendeur`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- --------------------------------------------------------
+
+--
+-- Structure de la table `contrat`
+--
+
+DROP TABLE IF EXISTS `contrat`;
+CREATE TABLE IF NOT EXISTS `contrat` (
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 -- --------------------------------------------------------
@@ -125,6 +139,8 @@ CREATE TABLE IF NOT EXISTS `livreur` (
   `Permis` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Type_Véhicule` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Temps_Tournee` time NOT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`ID`),
   KEY `Cmd_a_Livrer` (`Cmd_a_Livrer`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
@@ -176,7 +192,9 @@ CREATE TABLE IF NOT EXISTS `produit` (
 DROP TABLE IF EXISTS `vendeur`;
 CREATE TABLE IF NOT EXISTS `vendeur` (
   `Nom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `ID_Produit_Vendu` int(11) NOT NULL
+  `ID_Produit_Vendu` int(11) NOT NULL,
+  `ID` int(11) NOT NULL AUTO_INCREMENT,
+  PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 COMMIT;
 
