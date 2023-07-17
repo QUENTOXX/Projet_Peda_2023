@@ -3,20 +3,20 @@
 require_once "config.php";
 require_once "connection_mysqli.php";
 
-    // Vérifier si la connexion à la base de données existe déjà
-    global $serveur, $nomBDD, $nomUtilisateurBDD, $motDePasseBDD, $connexion;
+// Vérifier si la connexion à la base de données existe déjà
+global $serveur, $nomBDD, $nomUtilisateurBDD, $motDePasseBDD, $connexion;
 
-    try {
-        // Connexion à la base de données avec PDO
-        $connexion = new PDO("mysql:host=$serveur;dbname=$nomBDD;charset=utf8", $nomUtilisateurBDD, $motDePasseBDD);
+try {
+    // Connexion à la base de données avec PDO
+    $connexion = new PDO("mysql:host=$serveur;dbname=$nomBDD;charset=utf8", $nomUtilisateurBDD, $motDePasseBDD);
 
-        // Définition des options PDO
-        $connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+    // Définition des options PDO
+    $connexion->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    die("Erreur de connexion à la base de données : " . $e->getMessage());
+}
 
-    } catch (PDOException $e) {
-        die("Erreur de connexion à la base de données : " . $e->getMessage());
-    }
-
+$produits = getProduits();
 
 function connexion($email, $mdp)
 {
@@ -37,13 +37,16 @@ function connexion($email, $mdp)
         // Vérification du mot de passe
         if ($utilisateur != null && $mdp == $utilisateur["Mot_de_Passe"]) {
             // Authentification réussie
-            return true;
+            if ($utilisateur['admin']) {
+                return 2;
+            }
+            return 1;
         }
     } catch (PDOException $e) {
         die("Erreur de requête : " . $e->getMessage());
     }
     // Authentification échouée
-    return false;
+    return 0;
 }
 
 function inscription($nom, $prenom, $email, $mdp, $tel)
@@ -85,14 +88,6 @@ function updateCB($id, $numero_CB, $date_CB, $crypto_CB)
 }
 
 // Attention au chargement des images
-/*
-function getProduits(){
-    global $link;
-    $sql_prod = "SELECT * FROM produit";
-    $res_prod = mysqli_query($link, $sql_prod);
-    $produits = mysqli_fetch_all($res_prod);
-    return $produits;
-}*/
 function getProduits()
 {
     global $connexion;
@@ -225,24 +220,243 @@ function assignation_cmd($id_cmd)
         }
     }
 
-    $maj_cmd = "UPDATE commande SET ID_Livreur = $liv_close WHERE ID = $id_cmd";
+    $maj_cmd = "UPDATE commande SET ID_Livreur = $liv_close WHERE ID = $id_cmd"; //cmd pour mettre li du liv a la cmd
+    $maj_liv = "UPDATE livreur SET Cmd_a_Livrer = Cmd_a_Livrer + 1 WHERE ID = $liv_close"; // cmd pour ajouter 1 a cmd a livrer du liv
 
     // Exécution de la requête
-    if (mysqli_query($link, $maj_cmd)) {
+    if (mysqli_query($link, $maj_cmd) && mysqli_query($link, $maj_liv)) {
         echo "Livreur ajouté.";
     } else {
         echo "Erreur lors de l'exécution de la requête : ";
     }
 }
 
-function ajout_panier($id_client, $prix, $vendeur, $panier)
+function built_tab($ID_Liv)
 {
-    // crea commande + appel assi liv
-    // recup produit et qtt
-    // panier tableau  produit, qtt
-    // ajt prix au chiffre d'affaire mrk
+
+    // entrée id liv
+    // sorti 2 tab de dist entre les adresses type | adresse, A | A => array (B => 2, C=> 2) ...
+
+    global $link;
+
+    $Tab_add = [];
+    $Tab_final = [];
+    $Tab_dist = [];
+    $Ordre = range('A', 'Z');
+    $l = 1;
+
+    $sql_cmd = "SELECT * FROM commande WHERE ID_Livreur = $ID_Liv";
+    $res_cmd = mysqli_query($link, $sql_cmd);
+
+    if (mysqli_num_rows($res_cmd) == 0) {
+        echo 'Aucune commande pour ce livreur !';
+
+        return NULL;
+    }
+
+    $sql_liv = "SELECT * FROM livreur WHERE ID = $ID_Liv";
+    $res_liv = mysqli_query($link, $sql_liv);
+    $obj_liv = mysqli_fetch_object($res_liv);
+    $add_liv = $obj_liv->Adresse;
+
+    $Tab_add[$Ordre[0]] = $add_liv;
+
+    while ($obj_cmd = mysqli_fetch_object($res_cmd)) {   //toutes les cmd du livreur
+
+        $id_client = $obj_cmd->ID_Client;
+        $sql_cli = "SELECT * FROM client WHERE ID = $id_client";
+        $res_cli = mysqli_query($link, $sql_cli);
+        $obj_cli = mysqli_fetch_object($res_cli);
+        $add_cli = $obj_cli->Adresse;
+
+        $Tab_add[$Ordre[$l]] = $add_cli;
+        //array_push($Tab_add, $add_cli);
+        $l++;
+    }       // tableau des adresses sous forme B => "13 rue de l'ivrogne, RicardLand";
+
+    /*
+    foreach ($Tab_add as $key => $add) {
+
+        $dist = calculerDistance($add_liv, $add);
+
+        $Tab_dist[$key] = $dist;
+
+    }
+
+    $Tab_final[$Ordre[0]] = $Tab_dist;
+    */
+    foreach ($Tab_add as $key1 => $add1) {
+
+        foreach ($Tab_add as $key2 => $add2) {
+
+            if ($key1 != $key2) {
+                
+                $dist = calculerDistance($add1, $add2);
+    
+                $Tab_dist[$key2] = round($dist, 2);
+            }
+        }
+        $Tab_final[$key1] = $Tab_dist;
+        $Tab_dist = [];
+
+    }
+
+    return $Tab_final;
+    /*
+    for ($i=0; $i < count($Tab_add); $i++) { 
+    
+    }
+    */
+}
+
+function dijkstra($graph, $start)
+{
+    $distances = array();
+    $visited = array();
+    $previous = array();
+    $nodes = array();
+
+    foreach ($graph as $point => $value) {
+        $distances[$point] = INF;
+        $previous[$point] = null;
+        $nodes[$point] = $value;
+    }
+
+    $distances[$start] = 0;
+
+    while (!empty($nodes)) {
+        $minDistanceNode = null;
+
+        foreach ($nodes as $point => $value) {
+            if ($minDistanceNode === null || $distances[$point] < $distances[$minDistanceNode]) {
+                $minDistanceNode = $point;
+            }
+        }
+
+        foreach ($graph[$minDistanceNode] as $neighbor => $value) {
+            $newDistance = $distances[$minDistanceNode] + $value;
+
+            if ($newDistance < $distances[$neighbor]) {
+                $distances[$neighbor] = $newDistance;
+                $previous[$neighbor] = $minDistanceNode;
+            }
+        }
+
+        unset($nodes[$minDistanceNode]);
+    }
+
+    return $previous;
+}
+
+function CheminLePlusCourt($points)
+{
+    $graph = array();
+    $allPoints = array();
+
+    foreach ($points as $point => $distances) {
+        $allPoints[] = $point;
+
+        foreach ($distances as $neighbor => $distance) {
+            $graph[$point][$neighbor] = $distance;
+        }
+    }
+
+    $shortPath = null;
+    $shortDistance = INF;
+
+    $permutations = Permu($allPoints);
+
+    foreach ($permutations as $permutation) {
+        $distance = 0;
+        $Complet = true;
+
+        $start = $permutation[0];
+        $previous = dijkstra($graph, $start);
+
+        foreach ($permutation as $index => $point) {
+            if ($index < count($permutation) - 1) {
+                $end = $permutation[$index + 1];
+
+                if (!isset($previous[$end])) {
+                    $Complet = false;
+                    break;
+                }
+
+                $distance += $graph[$previous[$end]][$end];
+            }
+        }
+
+        if ($Complet && $distance < $shortDistance) {
+            $distance += $graph[$permutation[count($permutation) - 1]][$start]; // Ajoute la distance de retour au point de départ
+            $shortDistance = $distance;
+            $shortPath = $permutation;
+        }
+    }
+
+    return $shortPath;
+}
+
+function Permu($items, $perms = array())
+{
+    if (empty($items)) {
+        return array($perms);
+    }
+
+    $permutations = array();
+
+    for ($i = count($items) - 1; $i >= 0; --$i) {
+        $newItems = $items;
+        $newPerms = $perms;
+
+        list($foo) = array_splice($newItems, $i, 1);
+        array_unshift($newPerms, $foo);
+
+        $permutations = array_merge($permutations, Permu($newItems, $newPerms));
+    }
+
+    return $permutations;
+}
+
+function attribue_cmd($id_client){
+    global $connexion;
+
+    $req = $connexion->prepare("SELECT ID, Valide FROM commande WHERE ID_Client = :id_client");
+    $req->bindValue(":id_client", $id_client);
+    $req->execute();
+    $res=$req->fetch();
+    $req->closeCursor();
+    if($res["Valide"]==0){
+        return $res["ID"];
+    }
+    $req = $connexion->prepare("INSERT INTO commande (ID_Client) VALUES  ID_Client = :id_client");
+    $req->bindValue(":id_client", $id_client);
+    $req->execute();
+    $req->closeCursor();
+    attribue_cmd($id_client);
+}
 
 
+
+function ajout_panier($id_produit,$id_client,$quantite = 1){
+    global $connexion;
+    $cmd = attribue_cmd($id_client);
+    $req = $connexion-> prepare("INSERT INTO achats (ID_produit,ID_commande, quantite) VALUES (:ID_produit, :ID_commande,:quantite)");
+    $req->bindValue(":ID_produit", $id_produit);
+    $req->bindValue(":ID_commande", $cmd);
+    $req->bindValue(":quantite", $quantite);
+    $req->execute();
+    $req->closeCursor();
+}
+
+function confirm_panier($id_cmd)
+{
+    // Vérifier que la commande est valide (Vendeur, Prix)
+    
+    // changer valid 0-> 1 dans commande
+    // lancer assignation !
+    // ajt prix au chiffre d'affaire mrk (pas encore)
+
+    
 
 }
 

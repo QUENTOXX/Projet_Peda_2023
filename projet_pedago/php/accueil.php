@@ -1,8 +1,8 @@
 <?php
 include("header.php");
-include("fonction.php");
+include_once("fonction.php");
 
-$articlePromo = array_slice(getProduits(), 0, 6);
+$articlePromo = array_slice($GLOBALS['produits'], 0, 6);
 
 ?>
 
@@ -15,7 +15,17 @@ $articlePromo = array_slice(getProduits(), 0, 6);
 
 </head>
 
+
 <body>
+    <div class="quickaccess">
+        <ul class="list">
+            <li><a href="#">Catégorie 1</a></li>
+            <li><a href="#">Catégorie 2</a></li>
+            <li><a href="#">Catégorie 3</a></li>
+            <li><a href="#">Catégorie 4</a></li>
+            <li><a href="#">Catégorie 5</a></li>
+        </ul>
+    </div>
     <div class="containerbanner">
         <div class="bannerslides">
             <img src="/projet_pedago/img/realism-hand-drawn-horizontal-banner_23-2150203461.jpg" alt="Img1">
@@ -37,20 +47,20 @@ $articlePromo = array_slice(getProduits(), 0, 6);
                 -->
 
             <?php
-      foreach ($articlePromo as $item) {
-        print('<div class="product">');
-        print('<img src="data:image/jpeg;base64,' . base64_encode($item['Image']) . '"/>');
-        print('<h2>' . $item['Nom'] . '</h2><br>');
-        print($item['Prix'] . '€<br>');
-        print('En stock : ' . $item['Quantite'] . '<br>');
-        print('
+            foreach ($articlePromo as $item) {
+                print('<div class="product">');
+                print('<img src="data:image/jpeg;base64,' . base64_encode($item['Image']) . '"/>');
+                print('<h2>' . $item['Nom'] . '</h2><br>');
+                print($item['Prix'] . '€<br>');
+                print('En stock : ' . $item['Quantite'] . '<br>');
+                print('
                     <form method="post">
                     <button class="btn" type="submit" name="commander" value="' . $item['ID'] . '">Ajouter au panier</button>
                     </form>
                     ');
-        print("</div>");
-      }
-      ?>
+                print("</div>");
+            }
+            ?>
             <!--
         </div>
         <div class="product">

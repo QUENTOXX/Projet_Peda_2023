@@ -81,7 +81,7 @@ if (isset($_POST['valider'])) {
             <!-- 
         <div class="button"> <button class="register">S'inscrire</button> </div>
 -->
-            <div class="a-center"><a class="login" href="#">Vous avez déjà un compte?</a></div>
+            <div class="a-center"><a class="login" href="connexion.php">Vous avez déjà un compte?</a></div>
         </form>
         <?php
     if (!empty($erreur)) {

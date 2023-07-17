@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Jul 13, 2023 at 09:32 AM
+-- Generation Time: Jul 17, 2023 at 02:12 PM
 -- Server version: 5.7.36
 -- PHP Version: 7.4.26
 
@@ -20,6 +20,24 @@ SET time_zone = "+00:00";
 --
 -- Database: `newamazony`
 --
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `achats`
+--
+
+DROP TABLE IF EXISTS `achats`;
+CREATE TABLE IF NOT EXISTS `achats` (
+  `ID_commande` int(11) NOT NULL,
+  `ID_produit` int(11) NOT NULL,
+  `quantite` int(10) NOT NULL DEFAULT '1',
+  `ID_vendeur` int(11) DEFAULT NULL,
+  `Prix` int(10) DEFAULT NULL,
+  PRIMARY KEY (`ID_commande`,`ID_produit`),
+  KEY `fk_ID_produit` (`ID_produit`),
+  KEY `fk_ID_vendeur` (`ID_vendeur`)
+) ENGINE=MyISAM DEFAULT CHARSET=utf8;
 
 -- --------------------------------------------------------
 
@@ -50,7 +68,7 @@ CREATE TABLE IF NOT EXISTS `client` (
 INSERT INTO `client` (`Prénom`, `Nom`, `Mail`, `Tel`, `Adresse`, `Date_contrat`, `Mot_de_Passe`, `ID`, `numero_CB`, `date_CB`, `crypto_CB`) VALUES
 ('michel', 'toto', 'toto@gmail.com', '', '68B rue Smith, Espl. François Mitterand, 69002 Lyon', NULL, '81dc9bdb52d04dc20036dbd8313ed055', 1, NULL, NULL, NULL),
 ('Jean', 'Cary', 'jean@gmail.com', '', '29 avenue Leclerc, 69007 Lyon', NULL, '01cfcd4f6b8770febfb40cb906715822', 2, NULL, NULL, NULL),
-('Lagaffe', 'Gaston', 'gaston.lagaffe@gmail.com', '0789996633', NULL, NULL, 'f5b13112b8169fb52bdcb60a98bc2911', 3, NULL, NULL, NULL);
+('Lagaffe', 'Gaston', 'gaston.lagaffe@gmail.com', '0789996633', '1 chemin du grand pré, Marseille', NULL, 'f5b13112b8169fb52bdcb60a98bc2911', 3, NULL, NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -78,71 +96,21 @@ CREATE TABLE IF NOT EXISTS `colis` (
 DROP TABLE IF EXISTS `commande`;
 CREATE TABLE IF NOT EXISTS `commande` (
   `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `Prix` float DEFAULT NULL,
   `ID_Client` int(11) NOT NULL,
-  `Vendeur` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `ID_Livreur` int(11) DEFAULT NULL,
-  PRIMARY KEY (`ID_Client`),
-  UNIQUE KEY `ID` (`ID`),
-  KEY `Vendeur` (`Vendeur`)
-) ENGINE=MyISAM AUTO_INCREMENT=3 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+  `Valide` tinyint(1) NOT NULL DEFAULT '0',
+  PRIMARY KEY (`ID`)
+) ENGINE=MyISAM AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 
 --
 -- Dumping data for table `commande`
 --
 
-INSERT INTO `commande` (`ID`, `Prix`, `ID_Client`, `Vendeur`, `ID_Livreur`) VALUES
-(1, 90, 1, 'Estiam', 2),
-(2, 45.75, 2, 'Micromania', NULL);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `contrat`
---
-
-DROP TABLE IF EXISTS `contrat`;
-CREATE TABLE IF NOT EXISTS `contrat` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `contrat_livreur`
---
-
-DROP TABLE IF EXISTS `contrat_livreur`;
-CREATE TABLE IF NOT EXISTS `contrat_livreur` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `Nom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `contrat_vendeur`
---
-
-DROP TABLE IF EXISTS `contrat_vendeur`;
-CREATE TABLE IF NOT EXISTS `contrat_vendeur` (
-  `ID` int(11) NOT NULL AUTO_INCREMENT,
-  `Nom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  PRIMARY KEY (`ID`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `liste_produit_vendu`
---
-
-DROP TABLE IF EXISTS `liste_produit_vendu`;
-CREATE TABLE IF NOT EXISTS `liste_produit_vendu` (
-  `ID_Produit` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO `commande` (`ID`, `ID_Client`, `ID_Livreur`, `Valide`) VALUES
+(1, 1, 2, 0),
+(2, 2, NULL, 0),
+(3, 2, 2, 0),
+(4, 3, 2, 0);
 
 -- --------------------------------------------------------
 
@@ -155,8 +123,6 @@ CREATE TABLE IF NOT EXISTS `livreur` (
   `Prénom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Nom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Cmd_a_Livrer` int(11) NOT NULL,
-  `Adresse_Last_Livraison` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `Last_Cmd_Livree` date NOT NULL,
   `Adresse` varchar(500) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Permis` varchar(15) COLLATE utf8mb4_unicode_ci NOT NULL,
   `Type_Véhicule` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
@@ -170,34 +136,9 @@ CREATE TABLE IF NOT EXISTS `livreur` (
 -- Dumping data for table `livreur`
 --
 
-INSERT INTO `livreur` (`Prénom`, `Nom`, `Cmd_a_Livrer`, `Adresse_Last_Livraison`, `Last_Cmd_Livree`, `Adresse`, `Permis`, `Type_Véhicule`, `Temps_Tournee`, `ID`) VALUES
-('Jean', 'Cary', 2, '29 avenue Leclerc, 69007 Lyon', '2023-02-15', 'St Michel - Mairie, 69007 Lyon', 'B', 'voiture', 7.2, 1),
-('Michel', 'toto', 4, ' 98 Av. des Frères Lumière, 69008 Lyon', '2023-02-14', 'Croix-Rousse Centre\r\n69004 Lyon', 'B', 'voiture', 4, 2);
-
--- --------------------------------------------------------
-
---
--- Table structure for table `marketplace`
---
-
-DROP TABLE IF EXISTS `marketplace`;
-CREATE TABLE IF NOT EXISTS `marketplace` (
-  `Nom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
-  `Chiffre_d'affaire` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
-
--- --------------------------------------------------------
-
---
--- Table structure for table `panier`
---
-
-DROP TABLE IF EXISTS `panier`;
-CREATE TABLE IF NOT EXISTS `panier` (
-  `ID_Cmd` int(11) NOT NULL,
-  `ID_Produit` int(11) NOT NULL,
-  `Quantité` int(11) NOT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+INSERT INTO `livreur` (`Prénom`, `Nom`, `Cmd_a_Livrer`, `Adresse`, `Permis`, `Type_Véhicule`, `Temps_Tournee`, `ID`) VALUES
+('Jean', 'Cary', 2, 'St Michel - Mairie, 69007 Lyon', 'B', 'voiture', 7.2, 1),
+('Michel', 'toto', 4, 'Croix-Rousse Centre\r\n69004 Lyon', 'B', 'voiture', 4, 2);
 
 -- --------------------------------------------------------
 
@@ -236,6 +177,7 @@ CREATE TABLE IF NOT EXISTS `vendeur` (
   `Nom` varchar(50) COLLATE utf8mb4_unicode_ci NOT NULL,
   `ID_Produit_Vendu` int(11) NOT NULL,
   `ID` int(11) NOT NULL AUTO_INCREMENT,
+  `admin` tinyint(1) NOT NULL DEFAULT '0',
   PRIMARY KEY (`ID`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
 COMMIT;

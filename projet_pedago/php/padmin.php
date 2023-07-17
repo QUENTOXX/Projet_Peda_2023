@@ -1,36 +1,39 @@
 <html>
-
-<head>
-
-    <meta charset="UTF-8">
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <title> Compte Administrateur </title>
-    <link rel="stylesheet" href="../css/padmincss.css">
-
-</head>
-
-<body>
-    <header>
-        <?php
-        include("header.php");
-        ?>
-    </header>
-
-    <div class="container_admin">
-
-        <button class="options"> <a href="#"> Contrats </a> </button>
-
-        <button class="options"> <a href="#"> Gestion </a> </button>
-
-        <button class="options"> <a href="#"> Nos Produits </a> </button>
-
-
-    </div>
-
     <?php
-    include("footer.php");
+    include ("footer.php");
     ?>
+    <head>
 
-</body>
+        <meta charset="UTF-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title> Compte Administrateur </title>
+        <link rel="stylesheet" href="padmincss.css">
+
+    </head>
+
+    <body>
+
+        <div class="container_admin">
+
+            <div class="option_container">
+                <a href="#" class="options-button">Contrats</a>
+              </div>
+              
+              <div class="option_container">
+                <a href="#" class="options-button">Gestion</a>
+              </div>
+              
+              <div class="option_container">
+                <a href="#" class="options-button">Nos Produits</a>
+              </div>
+        
+        </div>
+
+        
+        <?php
+        include ("footer.php");
+        ?>
+
+    </body>
 
 </html>
