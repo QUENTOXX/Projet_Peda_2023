@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1:3306
--- Generation Time: Jul 18, 2023 at 01:36 PM
+-- Generation Time: Jul 18, 2023 at 03:25 PM
 -- Server version: 5.7.36
 -- PHP Version: 7.4.26
 
@@ -38,6 +38,13 @@ CREATE TABLE IF NOT EXISTS `achats` (
   KEY `fk_ID_produit` (`ID_produit`),
   KEY `fk_ID_vendeur` (`ID_vendeur`)
 ) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+
+--
+-- Dumping data for table `achats`
+--
+
+INSERT INTO `achats` (`ID_commande`, `ID_produit`, `quantite`, `ID_vendeur`, `Prix`) VALUES
+(1, 1, 3, NULL, NULL);
 
 -- --------------------------------------------------------
 

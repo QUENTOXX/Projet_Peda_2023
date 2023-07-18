@@ -1,6 +1,10 @@
 <?php
 
-if (!isset($_COOKIE['Connected'])) {
+include_once 'function.php';
+session_start();
+
+
+if (!isset($_SESSION['Connected'])) {
 
 ?>
 

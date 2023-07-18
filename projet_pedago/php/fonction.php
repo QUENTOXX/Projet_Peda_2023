@@ -20,36 +20,80 @@ $produits = getProduits();
 
 function connexion($email, $mdp)
 {
-    // Obtenir la connexion à la base de données
     global $connexion;
     $mdp = md5($mdp);
-
-    try {
-        // Préparation de la requête avec des paramètres
+        
         $requete = $connexion->prepare("SELECT * FROM client WHERE Mail = :mail");
         $requete->bindParam(':mail', $email);
         $requete->execute();
-
-        // Récupération du résultat
         $utilisateur = $requete->fetch();
         $requete->closeCursor();
 
-        // Vérification du mot de passe
         if ($utilisateur != null && $mdp == $utilisateur["Mot_de_Passe"]) {
-            // Authentification réussie
-            if ($utilisateur['admin']) {
-                return 2;
+            //SESSION START CLIENT
+            if(isset($_SESSION)){
+                session_unset();
+                session_destroy();
             }
-            return 1;
+            session_start(['cookie_lifetime' => 3600,]);
+            $_SESSION['Connexion'][0] = $utilisateur['ID'];
+            $_SESSION['Connexion'][1] = "client";
+            return true;
         }
-    } catch (PDOException $e) {
-        die("Erreur de requête : " . $e->getMessage());
+        $requete = $connexion->prepare("SELECT * FROM livreur WHERE email = :mail");
+        $requete->bindParam(':mail', $email);
+        $requete->execute();
+        $utilisateur = $requete->fetch();
+        $requete->closeCursor();
+
+        if ($utilisateur != null && $mdp == $utilisateur["mdp"]){
+            //SESSION START LIVREUR
+            if(isset($_SESSION)){
+                session_unset();
+                session_destroy();
+            }
+            session_start(['cookie_lifetime' => 3600,]);
+            $_SESSION['Connexion'][0] = $utilisateur['ID'];
+            $_SESSION['Connexion'][1] = "livreur";
+            return true;
+        }
+        $requete = $connexion->prepare("SELECT * FROM livreur WHERE email = :mail");
+        $requete->bindParam(':mail', $email);
+        $requete->execute();
+        $utilisateur = $requete->fetch();
+        $requete->closeCursor();
+
+        if ($utilisateur != null && $mdp == $utilisateur["mdp"]){
+            if($utilisateur['admin'] == 1){
+                //SESSION START ADMIN
+                if(isset($_SESSION)){
+                    session_unset();
+                    session_destroy();
+                }
+                session_start(['cookie_lifetime' => 3600,]);
+                $_SESSION['Connexion'][0] = $utilisateur['ID'];
+                $_SESSION['Connexion'][1] = "admin";
+                return true;
+            }
+            //SESSION START VENDEUR
+            if(isset($_SESSION)){
+                session_unset();
+                session_destroy();
+            }
+            session_start(['cookie_lifetime' => 3600,]);
+            $_SESSION['Connexion'][0] = $utilisateur['ID'];
+            $_SESSION['Connexion'][1] = "vendeur";
+            return true;
+        }
+    // ECHEC
+    if(isset($_SESSION)){
+        session_unset();
+        session_destroy();
     }
-    // Authentification échouée
-    return 0;
+    return false;
 }
 
-function inscription($nom, $prenom, $email, $mdp, $tel)
+function inscriptionClient($nom, $prenom, $email, $mdp, $tel)
 {
 
     global $connexion;
@@ -440,6 +484,19 @@ function attribue_cmd($id_client){
 function ajout_panier($id_produit,$id_client,$quantite = 1){
     global $connexion;
     $cmd = attribue_cmd($id_client);
+
+    $res = $connexion->query("SELECT * FROM achats WHERE ID_produit = $id_produit AND ID_commande = $cmd");
+        if(isset($res)){
+            $res = $res->fetch();
+            $quantite += $res["quantite"];
+            $req = $connexion->prepare("UPDATE achats SET quantite = :quantite WHERE ID_produit = :id_produit AND ID_commande = :id");
+            $req->bindValue(":quantite", $quantite);
+            $req->bindValue(":id_produit", $id_produit);
+            $req->bindValue(":id", $cmd);
+            $req->execute();
+            $req->closeCursor();
+            return;
+        }
     $req = $connexion-> prepare("INSERT INTO achats (ID_produit,ID_commande, quantite) VALUES (:ID_produit, :ID_commande,:quantite)");
     $req->bindValue(":ID_produit", $id_produit);
     $req->bindValue(":ID_commande", $cmd);
@@ -450,14 +507,180 @@ function ajout_panier($id_produit,$id_client,$quantite = 1){
 
 function confirm_panier($id_cmd)
 {
+    global $link;
+
+
     // Vérifier que la commande est valide (Vendeur, Prix)
+    $sql_cmd = "SELECT * FROM commande WHERE ID = $id_cmd";
+    $res_cmd = mysqli_query($link, $sql_cmd);
+    $obj_cmd = mysqli_fetch_object($res_cmd);
+    $cmd_Valid = $obj_cmd->Valide;
+
+    if ($cmd_Valid == 1) {
+        echo "Commande déja validée !!";
+
+        return null;
+    }
+
+    //verif si produit existe encore en nombre 
+
+    $sql_achat = "SELECT * FROM commande WHERE ID = $id_cmd";
+    $res_achat = mysqli_query($link, $sql_achat);
+    $obj_achat = mysqli_fetch_object($res_achat);
+    $achat_Vend = $obj_achat->ID_vendeur;
+    $achat_Prix = $obj_achat->Prix;
+
+    if ($achat_Prix == null || $achat_Prix == "" || $achat_Vend == null || $achat_Vend == "") {
+        echo"Prix ou vendeur manquant !!";
+
+        return null;
+    }
     
     // changer valid 0-> 1 dans commande
+    $maj_cmd = "UPDATE commande SET Valide = 1 WHERE ID = $id_cmd";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $maj_cmd)) {
+        echo "Commande validée !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête";
+    }
+
     // lancer assignation !
+    assignation_cmd($id_cmd);
+
     // ajt prix au chiffre d'affaire mrk (pas encore)
-
     
-
 }
 
 //bien fair ene page livreur ou il peut visualiser toute sa commande !!
+
+function affiche_cmd($id_liv)
+{
+    global $link;
+
+    $sql_cmd = "SELECT * FROM commande WHERE ID_Livreur = $id_liv";
+    $res_cmd = mysqli_query($link, $sql_cmd);
+
+    if (mysqli_num_rows($res_cmd) == 0) {
+        echo 'Aucune commande pour ce livreur !';
+
+        return NULL;
+    }
+
+    while ($obj_cmd = mysqli_fetch_object($res_cmd)) {
+        echo "Commande n°$obj_cmd->ID :<br>";
+        echo "Client n°$obj_cmd->ID_Client<br>";
+        echo "Valide : $obj_cmd->Valide<br>";
+        echo "<br>";
+    }
+}
+
+function ajout_Produit($H, $L, $l, $P, $Nom, $Vendeur, $Prix, $Desc, $Image, $Quantite){
+
+    global $link;
+
+    $ajt_prod = "INSERT INTO produit (Prix, Image, Description, Quantite, Nom, Hauteur, Largeur, Longueur, Poids) VALUES ($Prix, $Image, $Desc, $Quantite, $Nom, $H, $l, $L, $P)";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $ajt_prod)) {
+        echo "Produit ajouté !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête";
+    }
+}
+
+function update_Produit($H, $L, $l, $P, $Nom, $Vendeur, $Prix, $Desc, $Image, $Quantite){
+
+    global $link;
+
+    $upd_prod = "UPDATE produit SET Prix = $Prix, Image = $Image, Description = $Desc, Quantite = $Quantite, Nom = $Nom, Hauteur = $H, Largeur = $l, Longueur = $L, Poids = $P)";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $upd_prod)) {
+        echo "Produit modifier !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête";
+    }
+}
+
+function suppr_Produit($ID){
+
+    global $link;
+
+    $del_prod = "DELETE FROM produit WHERE ID = $ID";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $del_prod)) {
+        echo "Produit supprimer !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête";
+    }
+}
+
+function ajout_Compte_Cli($Prénom, $Nom, $Mail, $Tel, $Adresse, $Date_contrat, $Mot_de_Passe, $numero_CB, $date_CB, $crypto_CB){
+
+    global $link;
+
+    $ajt_cli = "INSERT INTO client (Prénom, Nom, Mail, Tel, Adresse, Date_contrat, Mot_de_Passe, numero_CB, date_CB, crypto_CB) VALUES ($Prénom, $Nom, $Mail, $Tel, $Adresse, $Date_contrat, $Mot_de_Passe, $numero_CB, $date_CB, $crypto_CB)";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $ajt_cli)) {
+        echo "Client ajouté !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête";
+    }
+}
+
+function update_Compte_Cli($Prénom, $Nom, $Mail, $Tel, $Adresse, $Date_contrat, $Mot_de_Passe, $numero_CB, $date_CB, $crypto_CB){
+
+    global $link;
+
+    $upd_cli = "UPDATE client SET Prénom = $Prénom, Nom = $Nom, Mail = $Mail, Tel = $Tel, Adresse = $Adresse, Date_contrat = $Date_contrat, Mot_de_Passe = $Mot_de_Passe, numero_CB = $numero_CB, date_CB = $date_CB, crypto_CB = $crypto_CB)";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $upd_cli)) {
+        echo "Client modifier !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête";
+    }
+}
+
+function suppr_Compte($ID, $type){      // attention bien ecrire le type like bdd sinon bruh
+
+    global $link;
+
+    $del_adm = "DELETE FROM $type WHERE ID = $ID";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $del_adm)) {
+        echo "Compte supprimer !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête";
+    }
+}
+
+function affiche_produit($nom){
+    global $connexion;
+    //caractère joker % pour la recherche plus facile
+    $term = "%".$nom."%"; 
+    $req = $connexion->prepare("SELECT * FROM produit WHERE Nom LIKE :nom");
+    $req->bindParam(":nom", $term, PDO::PARAM_STR);
+    $req->execute();
+    $res=$req->fetchAll();
+    $req->closeCursor();
+    header('Location: ../searchpageN.php');
+    foreach($res as $produit){
+        echo "<div class='produit'>";
+        echo "<img src='".$produit['Image']."' alt='image du produit' class='image_produit'>";
+        echo "<div class='description_produit'>";
+        echo "<h3>".$produit['Nom']."</h3>";
+        echo "<p>".$produit['Description']."</p>";
+        echo "<p>".$produit['Prix']."€</p>";
+        echo "<p>".$produit['Quantite']." en stock</p>";
+        echo "</div>";
+        echo "</div>";
+    }
+    return $res;
+}
+?>

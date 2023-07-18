@@ -36,7 +36,8 @@ if (isset($_POST['valider'])) {
     $erreur .= "Le téléphone doit être renseigné et ne contenir que des nombres <br>";
   }
   if (empty($erreur)) {
-    inscription($nom, $prenom, $email, $mdp, $tel);
+    inscriptionClient($nom, $prenom, $email, $mdp, $tel);
+    connexion($email,$mdp);
     $erreur = "Compte bien créé !";
   }
 }

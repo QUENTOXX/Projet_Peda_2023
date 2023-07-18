@@ -3,17 +3,6 @@ include_once("fonction.php");
 
 $answer = "";
 
-//Suppression les cookies
-
-if (isset($_COOKIE['Connected'])) {
-  unset($_COOKIE['Connected']);
-  //setcookie('Connected', 0, time() + 1); 
-}
-if (isset($_COOKIE['Admin'])) {
-  unset($_COOKIE['Admin']);
-  //setcookie('Admin', 0, time() + 1);
-}
-
 if (isset($_POST['valider'])) {
   $username = isset($_POST['mail']) ? $_POST['mail'] : "";
   $mdp = isset($_POST['mdp']) ? $_POST['mdp'] : "";
@@ -23,19 +12,13 @@ if (isset($_POST['valider'])) {
   if (!empty($username) && !empty($mdp)) {
     global $serveur;
     $res = connexion($username, $mdp);
-    if ($res == 0) {
+    if ($res == false) {
       $answer = "Identifiants incorrects";
-    } elseif ($res == 1) {
-      setcookie('Connected', $username, time() + 3600);
-      header("Location: http://$serveur/projet_pedago/php/accueil.php");
-    } elseif ($res == 2) {
-      setcookie('Connected', $username, time() + 3600);
-      setcookie('Admin', true, time() + 3600);
+    } else {
       header("Location: http://$serveur/projet_pedago/php/accueil.php");
     }
   }
 }
-
 
 ?>
 

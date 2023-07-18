@@ -4,6 +4,18 @@ include_once("fonction.php");
 
 $articlePromo = array_slice($GLOBALS['produits'], 0, 6);
 
+session_start();
+
+if (isset($_SESSION['Connexion'][0])) {
+    if ($_SESSION['Connexion'][1] == 'client') {
+        $id_client = $_SESSION['Connexion'][0];
+        if (isset($_POST['commander'])) {
+            var_dump($_POST['commander']);
+            ajout_panier($_POST['commander'], $id_client, 1);
+            header('Location: accueil.php');
+        }
+    }
+}
 ?>
 
 <!DOCTYPE html>
@@ -29,8 +41,7 @@ $articlePromo = array_slice($GLOBALS['produits'], 0, 6);
     <div class="containerbanner">
         <div class="bannerslides">
             <img src="/projet_pedago/img/realism-hand-drawn-horizontal-banner_23-2150203461.jpg" alt="Img1">
-            <img src="/projet_pedago/img/computer-sales-design-template-cb39cf57b55fecf5847061fb33755a0b_screen.jpg"
-                alt="Img2">
+            <img src="/projet_pedago/img/computer-sales-design-template-cb39cf57b55fecf5847061fb33755a0b_screen.jpg" alt="Img2">
             <img src="/projet_pedago/img/retailer_banner_image.jpg" alt="Img3">
             <img src="/projet_pedago/img/banniere-vente-mega-ruban-rouge-illustration_275806-126-1.jpg" alt="Img4">
         </div>
@@ -51,10 +62,11 @@ $articlePromo = array_slice($GLOBALS['produits'], 0, 6);
                 print('<div class="product">');
                 print('<img src="data:image/jpeg;base64,' . base64_encode($item['Image']) . '"/>');
                 print('<h2>' . $item['Nom'] . '</h2><br>');
+                print('<p>' . $item['Description'] . '</p>');
                 print($item['Prix'] . '€<br>');
                 print('En stock : ' . $item['Quantite'] . '<br>');
                 print('
-                    <form method="post">
+                    <form action="accueil.php" method="POST">
                     <button class="btn" type="submit" name="commander" value="' . $item['ID'] . '">Ajouter au panier</button>
                     </form>
                     ');
