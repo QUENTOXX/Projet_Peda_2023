@@ -27,7 +27,7 @@ if (isset($_POST['valider'])) {
 
 <head lang="fr">
     <title>Inscription</title>
-    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/connexion.css">
+    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/connexion.css" href="/projet_pedago/css/Main.css">
 
 </head>
 

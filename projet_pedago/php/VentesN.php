@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Ventes</title>
-  <link rel="stylesheet" type="text/css" href="./css/ventes.css">
+  <link rel="stylesheet" type="text/css" href="./css/ventes.css" href="/projet_pedago/css/Main.css">
 </head>
 <?php
   include ("header.php");

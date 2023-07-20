@@ -7,7 +7,7 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title> Compte Administrateur </title>
-        <link rel="stylesheet" href="padmincss.css">
+        <link rel="stylesheet" href="padmincss.css" href="/projet_pedago/css/Main.css">
 
     </head>
 

@@ -9,7 +9,7 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title> Gestion Administrateur </title>
-        <link rel="stylesheet" href="/projet_pedago/css/Agestioncss.css">
+        <link rel="stylesheet" href="/projet_pedago/css/Agestioncss.css" href="/projet_pedago/css/Main.css">
 
     </head>
 
@@ -86,7 +86,23 @@
 
         </div>
 
-  
+    <script type="text/javascript">
+        document.addEventListener('DOMContentLoaded', function() {
+            const pictureInput = document.getElementById('pictureInput');
+            const maxFileSize = 5 * 1024 * 1024; // 5 MB
+
+            pictureInput.addEventListener('change', function() {
+                if (pictureInput.files.length > 0) {
+                    const fileSize = pictureInput.files[0].size;
+                    if (fileSize > maxFileSize) {
+                        alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
+                        pictureInput.value = '';
+                    }
+                }
+            });
+        });
+    </script>
+
 
 
     
@@ -96,18 +112,4 @@
 <?php
   include ("footer.php");
 ?>
-<script type="text/javascript">
-  document.getElementById('pictureInput').addEventListener('change', function() {
-    const fileInput = this;
-    const maxFileSize = 5 * 1024 * 1024; // 10 MB (you can adjust this value)
 
-    if (fileInput.files.length > 0) {
-      const fileSize = fileInput.files[0].size;
-      if (fileSize > maxFileSize) {
-        alert('File size exceeds the limit (5 MB). Please choose a smaller file.');
-        // Clear the selected file to prevent form submission
-        fileInput.value = '';
-      }
-    }
-  });
-</script>

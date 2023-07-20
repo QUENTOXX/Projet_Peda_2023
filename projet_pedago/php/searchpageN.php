@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Searchpage</title>
-    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/searchpagecss.css">
+    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/searchpagecss.css" href="/projet_pedago/css/Main.css">
 </head>
 <?php
   include ("header.php");

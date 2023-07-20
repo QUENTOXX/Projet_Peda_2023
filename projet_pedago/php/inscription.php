@@ -69,7 +69,7 @@ if (isset($_POST['valider'])) {
 
 <head lang="fr">
     <title>Inscription</title>
-    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/inscriptioncss.css">
+    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/inscriptioncss.css" href="/projet_pedago/css/Main.css">
 
 </head>
 

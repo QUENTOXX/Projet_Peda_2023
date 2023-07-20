@@ -2,7 +2,7 @@
 <html>
 <head>
   <title>Suivi de colis</title>
-  <link rel="stylesheet" type="text/css" href="/projet_pedago/css/AccountCcss.css">
+  <link rel="stylesheet" type="text/css" href="/projet_pedago/css/AccountCcss.css" href="/projet_pedago/css/Main.css">>
 </head>
 <?php
   include ("header.php");

@@ -6,7 +6,7 @@
 <html>
 <head>
   <title>Commandes</title>
-  <link rel="stylesheet" type="text/css" href="/projet_pedago/css/AccountCcss.css">
+  <link rel="stylesheet" type="text/css" href="/projet_pedago/css/AccountCcss.css" href="/projet_pedago/css/Main.css">
 </head>
 
 <body>

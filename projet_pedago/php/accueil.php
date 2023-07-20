@@ -21,7 +21,7 @@ if (isset($_SESSION['Connexion'][0])) {
 
 <head lang="fr">
     <title>New Amazony</title>
-    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/Style.css">
+    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/Style.css" href="/projet_pedago/css/Main.css">
 
 </head>
 

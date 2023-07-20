@@ -8,7 +8,7 @@
         <meta charset="UTF-8">
         <meta http-equiv="X-UA-Compatible" content="IE=edge">
         <title> Administrateur Contrats </title>
-        <link rel="stylesheet" href="css/Acontratcss.css">
+        <link rel="stylesheet" href="css/Acontratcss.css" href="/projet_pedago/css/Main.css">
 
     </head>
 

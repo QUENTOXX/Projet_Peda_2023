@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Page Livreur</title>
-    <link rel="stylesheet" type="text/css" href="./css/livraisons.css">
+    <link rel="stylesheet" type="text/css" href="./css/livraisons.css" href="/projet_pedago/css/Main.css">
     <script src="./js/script.js"></script>
 </head>
 <?php

@@ -2,13 +2,13 @@
 <html>
 <head>
   <title>Mon Compte</title>
-  <link rel="stylesheet" type="text/css" href="./css/vendeur.css">
+  <link rel="stylesheet" type="text/css" href="./css/vendeur.css" href="/projet_pedago/css/Main.css">
 </head>
 <?php
   include ("header.php");
 ?>
 <body>
-  <div class="Mcontainer">
+  <div class="container">
     <h1>Mon Compte</h1>
     <div class="menu">
       <a href="./mes_produitsN.php">Mes produits</a>
