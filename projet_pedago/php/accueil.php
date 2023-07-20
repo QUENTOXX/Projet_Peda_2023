@@ -4,15 +4,13 @@ include_once("fonction.php");
 
 $articlePromo = array_slice($GLOBALS['produits'], 0, 6);
 
-session_start();
-
 if (isset($_SESSION['Connexion'][0])) {
     if ($_SESSION['Connexion'][1] == 'client') {
         $id_client = $_SESSION['Connexion'][0];
         if (isset($_POST['commander'])) {
             var_dump($_POST['commander']);
             ajout_panier($_POST['commander'], $id_client, 1);
-            header('Location: accueil.php');
+            header('Location: /projet_pedago/php/accueil.php');
         }
     }
 }
@@ -49,14 +47,6 @@ if (isset($_SESSION['Connexion'][0])) {
 
     <section class="products">
         <div class="containerproducts">
-            <!--
-          <div class="product">
-                <img id="product img" src="/projet_pedago/img/product1.jpg" alt="Product1">
-                <h2>Mixcder E9 Casque Bluetooth à Réduction de Bruit Active</h2>
-                <p>69,99€</p>
-                <a href="#" class="btn">Ajouter au panier</a>
-                -->
-
             <?php
             foreach ($articlePromo as $item) {
                 print('<div class="product">');
@@ -66,30 +56,16 @@ if (isset($_SESSION['Connexion'][0])) {
                 print($item['Prix'] . '€<br>');
                 print('En stock : ' . $item['Quantite'] . '<br>');
                 print('
-                    <form action="accueil.php" method="POST">
+                    <form action="/projet_pedago/php/accueil.php" method="POST">
                     <button class="btn" type="submit" name="commander" value="' . $item['ID'] . '">Ajouter au panier</button>
                     </form>
                     ');
                 print("</div>");
             }
             ?>
-            <!--
-        </div>
-        <div class="product">
-            <img id="product img" src="/projet_pedago/img/product2.jpg" alt="Product2">
-            <h2>Fire TV Stick 4K Max | Aphpareil de streaming, Wi-Fi 6</h2>
-            <p>109,99€ Livraison GRATUITE en France</p>
-            <a href="#" class="btn">Ajouter au panier</a>
-        </div>
-        <div class="product">
-            <img id="product img" src="/projet_pedago/img/product3.jpg" alt="Product3">
-            <h2>Fossil Montre pour hommes Commuter</h2>
-            <p>108,15€ PVC: 119,00€</p>
-            <a href="#" class="btn">Ajouter au panier</a>
-        </div>
-      -->
         </div>
     </section>
+
 </body>
 <?php
 include("footer.php");

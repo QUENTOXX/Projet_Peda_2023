@@ -2,11 +2,11 @@
 <html>
 
 <head>
-    <link rel="stylesheet" type="text/css" href="../css/Paniercss.css">
+    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/Paniercss.css">
 </head>
 <?php
     include("header.php");
-    ?>
+?>
 
 <body>
     <h1>Panier</h1>

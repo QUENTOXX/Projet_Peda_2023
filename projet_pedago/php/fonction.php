@@ -57,7 +57,7 @@ function connexion($email, $mdp)
             $_SESSION['Connexion'][1] = "livreur";
             return true;
         }
-        $requete = $connexion->prepare("SELECT * FROM livreur WHERE email = :mail");
+        $requete = $connexion->prepare("SELECT * FROM vendeur WHERE email = :mail");
         $requete->bindParam(':mail', $email);
         $requete->execute();
         $utilisateur = $requete->fetch();
@@ -93,23 +93,71 @@ function connexion($email, $mdp)
     return false;
 }
 
+function deconnexion(){
+    session_unset();
+    session_destroy();
+}
+
+function checkEmail($email){
+    global $connexion;
+    $res = $connexion->query("SELECT Mail FROM client WHERE Mail = '$email'");
+    $res = $res->fetch();
+    if($res){
+        return false;
+    }
+    $res = $connexion->query("SELECT email FROM vendeur WHERE email = '$email'");
+    $res = $res->fetch();
+    if($res){
+        return false;
+    }
+    return true;
+}
+
 function inscriptionClient($nom, $prenom, $email, $mdp, $tel)
 {
 
     global $connexion;
-
-    //on crypte le mot de passe entree par l'utilisateur
-    $mdp = md5($mdp);
-    //on crée une requête SQL qui 
-    $sth = $connexion->prepare("INSERT INTO client(Nom, Prénom, Mail, Mot_de_Passe, Tel) VALUES(:Nom, :Prenom, :Mail, :mdp, :tel)");
-    $sth->bindValue(":Nom", $nom);
-    $sth->bindValue(":Prenom", $prenom);
-    $sth->bindValue(":Mail", $email);
-    $sth->bindValue(":mdp", $mdp);
-    $sth->bindValue(":tel", $tel);
-    $sth->execute();
-    $sth->closeCursor();
+    
+    if(checkEmail($email)){
+        //on crypte le mot de passe entree par l'utilisateur
+        $mdp = md5($mdp);
+        //on crée une requête SQL qui 
+        $sth = $connexion->prepare("INSERT INTO client(Nom, Prénom, Mail, Mot_de_Passe, Tel) VALUES(:Nom, :Prenom, :Mail, :mdp, :tel)");
+        $sth->bindValue(":Nom", $nom);
+        $sth->bindValue(":Prenom", $prenom);
+        $sth->bindValue(":Mail", $email);
+        $sth->bindValue(":mdp", $mdp);
+        $sth->bindValue(":tel", $tel);
+        $sth->execute();
+        $sth->closeCursor();
+        return true;
+    }
+    return false;
+    
 }
+
+function inscriptionVendeur($nom, $prenom, $email, $mdp, $tel)
+{
+
+    global $connexion;
+
+    if(checkEmail($email)){
+        //on crypte le mot de passe entree par l'utilisateur
+        $mdp = md5($mdp);
+        //on crée une requête SQL qui 
+        $sth = $connexion->prepare("INSERT INTO vendeur(Nom, email, Prenom, mdp, tel) VALUES(:Nom, :Mail, :Prenom, :mdp, :tel)");
+        $sth->bindValue(":Nom", $nom);
+        $sth->bindValue(":Prenom", $prenom);
+        $sth->bindValue(":Mail", $email);
+        $sth->bindValue(":mdp", $mdp);
+        $sth->bindValue(":tel", $tel);
+        $sth->execute();
+        $sth->closeCursor();
+        return true;
+    }
+    return false;
+}
+
 function updateAdresse($id_client, $adresse)
 {
     global $connexion;
@@ -469,7 +517,7 @@ function attribue_cmd($id_client){
     $req->execute();
     $res=$req->fetch();
     $req->closeCursor();
-    if($res["Valide"]==0){
+    if($res){
         return $res["ID"];
     }
     $req = $connexion->prepare("INSERT INTO commande (ID_Client) VALUES  ID_Client = :id_client");
@@ -481,13 +529,12 @@ function attribue_cmd($id_client){
 
 
 
-function ajout_panier($id_produit,$id_client,$quantite = 1){
+function ajout_panier($id_produit,$id_client,int $quantite = 1){
     global $connexion;
     $cmd = attribue_cmd($id_client);
-
-    $res = $connexion->query("SELECT * FROM achats WHERE ID_produit = $id_produit AND ID_commande = $cmd");
-        if(isset($res)){
-            $res = $res->fetch();
+    $res = $connexion->query("SELECT * FROM achats WHERE ID_produit = '$id_produit' AND ID_commande = '$cmd'");
+    $res = $res->fetch();
+        if($res){
             $quantite += $res["quantite"];
             $req = $connexion->prepare("UPDATE achats SET quantite = :quantite WHERE ID_produit = :id_produit AND ID_commande = :id");
             $req->bindValue(":quantite", $quantite);
@@ -632,6 +679,20 @@ function ajout_Compte_Cli($Prénom, $Nom, $Mail, $Tel, $Adresse, $Date_contrat, 
     }
 }
 
+function ajout_Compte_Liv($Prénom, $Nom, $Mail, $Adresse, $Permis, $Mot_de_Passe, $Type_Véhicule, $Cmd_a_Livrer, $Temps_Tournee){
+
+    global $link;
+
+    $ajt_li = "INSERT INTO client (Prénom, Nom, Cmd_a_Livrer, Adresse, Permis, Type_Véhicule, Temps_Tournee, email, mdp) VALUES ($Prénom, $Nom, $Cmd_a_Livrer, $Adresse, $Permis, $Type_Véhicule, $Temps_Tournee, $Mail, $Mot_de_Passe)";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $ajt_cliv)) {
+        echo "Livreur ajouté !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête";
+    }
+}
+
 function update_Compte_Cli($Prénom, $Nom, $Mail, $Tel, $Adresse, $Date_contrat, $Mot_de_Passe, $numero_CB, $date_CB, $crypto_CB){
 
     global $link;
@@ -641,6 +702,34 @@ function update_Compte_Cli($Prénom, $Nom, $Mail, $Tel, $Adresse, $Date_contrat,
     // Exécution de la requête
     if (mysqli_query($link, $upd_cli)) {
         echo "Client modifier !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête";
+    }
+}
+
+function update_Compte_Vend($Nom, $Mail, $Adresse, $Mot_de_Passe, $ID_Produit_Vendu, $admin, $tel, $Prenom){
+
+    global $link;
+
+    $upd_vend = "UPDATE client SET Prenom = $Prenom, Nom = $Nom, ID_Produit_Vendu = $ID_Produit_Vendu, admin = $admin, email = $Mail, mdp = $Mot_de_Passe, tel = $tel)";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $upd_vend)) {
+        echo "Vendeur modifier !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête";
+    }
+}
+
+function update_Compte_Liv($Prénom, $Nom, $Mail, $Adresse, $Permis, $Mot_de_Passe, $Type_Véhicule, $Cmd_a_Livrer, $Temps_Tournee){
+
+    global $link;
+
+    $upd_liv = "UPDATE client SET Prénom = $Prénom, Nom = $Nom, email = $Mail, Adresse = $Adresse, Permis = $Permis, mdp = $Mot_de_Passe, Type_Véhicule = $Type_Véhicule, Cmd_a_Livrer = $Cmd_a_Livrer, Temps_Tournee = $Temps_Tournee)";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $upd_liv)) {
+        echo "Livreur modifier !";
     } else {
         echo "Erreur lors de l'exécution de la requête";
     }
@@ -669,18 +758,54 @@ function affiche_produit($nom){
     $req->execute();
     $res=$req->fetchAll();
     $req->closeCursor();
-    header('Location: ../searchpageN.php');
+    /*header('Location: /projet_pedago/php/searchpageN.php');*/
     foreach($res as $produit){
+        echo "<div id='resultats'>";
         echo "<div class='produit'>";
-        echo "<img src='".$produit['Image']."' alt='image du produit' class='image_produit'>";
+        echo ('<img src="data:image/jpeg;base64,' . base64_encode($produit['Image']) . '"/>');
         echo "<div class='description_produit'>";
         echo "<h3>".$produit['Nom']."</h3>";
         echo "<p>".$produit['Description']."</p>";
         echo "<p>".$produit['Prix']."€</p>";
         echo "<p>".$produit['Quantite']." en stock</p>";
+        echo "<form action='' method='POST'>";
+        echo "<button class='btn' type='submit' name='commander' value=" . $produit["ID"]. ">Ajouter au panier</button>";
+        echo "</form>";
+        echo "</div>";
         echo "</div>";
         echo "</div>";
     }
     return $res;
+}
+
+function filtre_Rech($type, $col, $filtre){
+
+    global $link;
+
+    $sql_filtre = "SELECT * FROM '$type' WHERE '$col' = $filtre";
+    $res_filtre = mysqli_query($link, $sql_filtre);
+
+    while ($row=mysqli_fetch_object($res_filtre)) {
+        echo "<tr>";
+        echo "<td>$row</td>";
+        echo "</td>";
+        echo "</tr>";
+	}
+
+}
+
+function filtre_Produit($col, $filtre){
+
+    global $link;
+
+    $sql_filtre = "SELECT * FROM produit WHERE '$col' = $filtre";
+    $res_filtre = mysqli_query($link, $sql_filtre);
+
+    while ($row=mysqli_fetch_object($res_filtre)) {
+        echo "<tr>";
+        echo "<td>$row</td>";
+        echo "</td>";
+        echo "</tr>";
+	}
 }
 ?>

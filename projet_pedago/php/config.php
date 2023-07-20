@@ -2,6 +2,6 @@
     //Information de la DB
     $serveur = "localhost";
     $nomUtilisateurBDD = "root";
-    $motDePasseBDD = "";
+    $motDePasseBDD = "Cf75mz5q*";
     $nomBDD = "newamazony";
 ?>

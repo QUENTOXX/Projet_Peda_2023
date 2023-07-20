@@ -1,5 +1,5 @@
 <?php
-include("header.php");
+
 include_once("fonction.php");
 
 $erreur = "";
@@ -12,7 +12,7 @@ if (isset($_POST['valider'])) {
   $prenom = isset($_POST['prenom']) ? $_POST['prenom'] : "";
   $tel = isset($_POST['tel']) ? $_POST['tel'] : "";
   $email = isset($_POST['email']) ? $_POST['email'] : "";
-
+  $type = isset($_POST['type']) ? $_POST['type'] : "";
 
   if (empty($mdp)) {
     $erreur .= "Le mot de passe doit être renseigné <br>";
@@ -35,12 +35,33 @@ if (isset($_POST['valider'])) {
   if (empty($tel) || !is_numeric($tel)) {
     $erreur .= "Le téléphone doit être renseigné et ne contenir que des nombres <br>";
   }
+  if (empty($type) || ($type != 'Client' && $type != 'Vendeur')) {
+    $erreur .= "Choisissez correctement votre type ! <br>";
+  }
   if (empty($erreur)) {
-    inscriptionClient($nom, $prenom, $email, $mdp, $tel);
-    connexion($email,$mdp);
-    $erreur = "Compte bien créé !";
+    if ($type == 'Client'){
+      if(!inscriptionClient($nom, $prenom, $email, $mdp, $tel)){
+        $erreur = 'Mail déjà utilisé'; 
+      }
+      else{
+        connexion($email,$mdp);
+        $erreur = "Compte bien créé !";
+      }
+    }
+    else {
+      if(!inscriptionVendeur($nom, $prenom, $email, $mdp, $tel)){
+        $erreur = 'Mail déjà utilisé'; 
+      }
+      else{
+        connexion($email,$mdp);
+        $erreur = "Compte bien créé !";
+      }
+    }
+    
+    
   }
 }
+
 ?>
 
 <!DOCTYPE html>
@@ -53,9 +74,22 @@ if (isset($_POST['valider'])) {
 </head>
 
 <body>
+  <?php
+include("header.php");
+?>
+    <h2>Rejoignez nous</h2>
+
+    <div id="err">
+      <div id="erreurs">
+              <?= $erreur; ?>
+      </div>
+
+    </div>
 
     <div class="container_form">
 
+      
+      
         <form action="Inscription.php" method="POST">
 
             <label for="firstname">Votre nom</label>
@@ -76,6 +110,13 @@ if (isset($_POST['valider'])) {
             <label for="passwordconfirm">Confirmez votre mot de passe</label>
             <input placeholder="Mot de passe" class="formsign" type="password" name="mdp2" id="mdp2">
 
+
+            <label for="passwordconfirm">Type de compte</label>
+            <select id="type" name="type">
+              <option value="Client">Client</option>
+              <option value="Vendeur">Vendeur</option>
+            </select>
+
             <div class="button"><input class="register" type="submit" id="valider" name="valider" value="S'inscrire">
             </div>
 
@@ -83,18 +124,13 @@ if (isset($_POST['valider'])) {
         <div class="button"> <button class="register">S'inscrire</button> </div>
 -->
             <div class="a-center"><a class="login" href="connexion.php">Vous avez déjà un compte?</a></div>
-        </form>
-        <?php
-    if (!empty($erreur)) {
-    ?>
-        <div id="erreurs">
-            <?= $erreur; ?>
-        </div>
-        <?php
-    }
-    ?>
+        </form>     
+        
+
     </div>
 
+    
+    
     <?php
   include("footer.php");
   ?>
