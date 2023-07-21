@@ -1,0 +1,69 @@
+.contract_container{
+
+    width: 80%;
+    height: 100px;
+    margin-top: 50px;
+    margin-left: 10%;
+    margin-bottom: 10%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 2px 7px #232f3e;
+
+
+    }
+
+.contract_list{
+
+
+    width: 80%;
+    height: 100px;
+    margin-top: 20px;
+    margin-left: 10%;
+    margin-bottom: 20%;
+    background-color: #fff;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+
+
+}
+
+.contracts li{
+
+    margin-bottom: 10px;
+
+}
+
+    .contract_search {
+        display: flex;
+        border-radius: 15px;
+        display: flex;
+        flex-grow: 1; 
+        margin: 0 10px; 
+      }
+      
+      .contract_search input[type="text"] {
+        flex-grow: 1;
+        padding: 8px;
+        border: none;
+        background-color: #232f3e;
+        width: 100%;
+        color: #fff;
+      }
+
+      .contract_search input::placeholder {
+        color: #fff; 
+      }
+      
+      .contract_search button {
+        background-color: #FF9900;
+        color: #fff;
+        border: none;
+        padding: 8px 16px;
+        cursor: pointer;
+      }
+  

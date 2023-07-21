@@ -1,0 +1,69 @@
+* {
+  box-sizing: border-box;
+  margin: 0;
+  padding: 0;
+}
+
+h1 {
+  text-align: center;
+  color: #111;
+}
+
+.historic-container {
+  width: 80%;
+  margin: 50px auto;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 10px;
+  box-shadow: 0 2px 7px #232f3e;
+  max-height: auto;
+}
+
+.historic {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  max-height: auto;
+}
+
+.order-list {
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  width: 100%;
+}
+
+.commandes {
+  display: flex;
+  align-items: center;
+  margin-bottom: 20px;
+  border-bottom: 1px solid #ddd;
+  padding-bottom: 10px;
+  box-shadow: 0 2px 7px #232f3e !important;
+  width: 100%;
+}
+
+.order-details {
+  width: 40%;
+}
+
+.order-items {
+  width: 60%;
+}
+
+.order-items ul {
+  list-style: none;
+}
+
+.order-items ul li {
+  margin-bottom: 5px;
+}
+
+li{
+
+  width: 100%;
+
+}

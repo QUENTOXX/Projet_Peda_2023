@@ -1,0 +1,44 @@
+body {
+    margin: 0;
+    padding: 0;
+    font-family: Arial, sans-serif;
+  }
+  
+
+
+  .container_admin{
+
+    max-width: 1000px;
+    padding: 28px 0 30px;
+    margin: 137px auto;
+    background: #fff;
+    opacity: 0.8 !important;
+    display: flex;
+    flex: center;
+
+  }
+
+  a {
+
+    list-style-type: none;
+    text-decoration: none;
+    color: rgba(16, 18, 37, 0.849);
+    margin: 0;
+    padding: 0;
+    flex: center;
+
+  }
+
+  .options{
+
+    max-width: 25%px;
+    padding: 28px 0 30px;
+    margin: 137px auto;
+    background: #fff;
+    border-radius: 7px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+    opacity: 0.8 !important;
+    flex: center;
+
+
+  }
