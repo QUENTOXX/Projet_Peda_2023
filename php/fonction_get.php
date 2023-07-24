@@ -18,7 +18,7 @@ function connexion($email, $mdp){
         $utilisateur = $requete->fetch();
         $requete->closeCursor();
 
-        if ($utilisateur != null && $mdp == $utilisateur["Mot_de_Passe"]) {
+        if ($utilisateur != null && $mdp == $utilisateur["mdp"]) {
             //SESSION START CLIENT
             if(isset($_SESSION)){
                 session_unset();
@@ -149,10 +149,11 @@ function built_tab($ID_Liv){
         $obj_cli = mysqli_fetch_object($res_cli);
         $add_cli = $obj_cli->Adresse;
 
-        $Tab_add[$Ordre[$l]] = $add_cli;
-        //array_push($Tab_add, $add_cli);
-        $l++;
-    }       // tableau des adresses sous forme B => "13 rue de l'ivrogne, RicardLand";
+        $Tab_add[$id_client] = $add_cli;
+        //$l++;
+
+
+    }       // tableau des adresses sous forme id client => "13 rue de l'ivrogne, RicardLand";
 
     /*
     foreach ($Tab_add as $key => $add) {
@@ -204,7 +205,7 @@ function affiche_cmd($id_liv){
     while ($obj_cmd = mysqli_fetch_object($res_cmd)) {
         echo "Commande n°$obj_cmd->ID :<br>";
         echo "Client n°$obj_cmd->ID_Client<br>";
-        echo "Valide : $obj_cmd->Valide<br>";
+        //echo "Valide : $obj_cmd->Valide<br>";
         echo "<br>";
     }
 }
@@ -340,19 +341,70 @@ function recup_Data_Livreur($ID_Liv){
     return $data;
 }
 
-function check($mdp, $id_client){
+function check($mdp){
     global $connexion;
+    $type = $_SESSION['Connexion'][1];
+    $id = $_SESSION['Connexion'][0];
     $mdp = md5($mdp);
-    $req = $connexion->prepare("SELECT * FROM client WHERE ID = :id");
-    $req->bindParam(":id", $id_client);
+    if ($type == 'admin'){$type = 'vendeur';}
+    $req = $connexion->query("SELECT * FROM $type WHERE ID = '$id'");
     $req->execute();
     $res=$req->fetch();
     $req->closeCursor();
-    if($mdp == $res['Mot_de_Passe']){
+    if($mdp == $res['mdp']){
         return true;
     }
     return false;
+}
 
+function recu_Produit_By_Vendeur($ID_Vend){
+
+    global $link;
+
+    $data = [];
+    $desc = [];
+    $all_Data = [];
+
+    $sql_data = "SELECT * FROM produit WHERE ID_Vendeur = $ID_Vend";
+    $res_data = mysqli_query($link, $sql_data);
+
+    $sql = "DESCRIBE produit";
+    $result = $link->query($sql);
+
+    while($row = $result->fetch_assoc()){
+
+        array_push($desc, $row['Field']);
+    }
+
+    while($obj = mysqli_fetch_object($res_data)){
+
+        foreach ($desc as $value) {
+            
+            $data[$value] = $obj->$value;
+        }
+        array_push($all_Data, $data);
+    }
+
+
+    return $all_Data;
+}
+
+function getCart($id_client){
+    global $connexion;
+    $req = $connexion->query("SELECT ID from commande WHERE ID_Client = '$id_client' AND Valide = '0'");
+    $req->execute();
+    $res = $req->fetch();
+    $req->closeCursor();
+    if (!isset($res)){
+        return false;
+    }
+
+    $ID = $res['ID'];
+    $req = $connexion->query("SELECT * from achats WHERE ID_commande = $ID");
+    $req->execute();
+    $res = $req->fetchAll();
+    $req->closeCursor();
+    return $res;
 }
 
 ?>

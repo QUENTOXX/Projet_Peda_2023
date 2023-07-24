@@ -16,7 +16,7 @@ function inscriptionClient($nom, $prenom, $email, $mdp, $tel){
         //on crypte le mot de passe entree par l'utilisateur
         $mdp = md5($mdp);
         //on crée une requête SQL qui 
-        $sth = $connexion->prepare("INSERT INTO client(Nom, Prénom, Mail, Mot_de_Passe, Tel) VALUES(:Nom, :Prenom, :Mail, :mdp, :tel)");
+        $sth = $connexion->prepare("INSERT INTO client(Nom, Prénom, Mail, mdp, Tel) VALUES(:Nom, :Prenom, :Mail, :mdp, :tel)");
         $sth->bindValue(":Nom", $nom);
         $sth->bindValue(":Prenom", $prenom);
         $sth->bindValue(":Mail", $email);
@@ -156,7 +156,7 @@ function assignation_cmd($id_cmd){
 function attribue_cmd($id_client){
     global $connexion;
 
-    $req = $connexion->prepare("SELECT ID, Valide FROM commande WHERE ID_Client = :id_client");
+    $req = $connexion->prepare("SELECT ID, Valide FROM commande WHERE ID_Client = :id_client AND Valide = '0'");
     $req->bindValue(":id_client", $id_client);
     $req->execute();
     $res=$req->fetch();
@@ -240,14 +240,98 @@ function confirm_panier($id_cmd){
     // ajt prix au chiffre d'affaire mrk (pas encore)
 } //bien fair ene page livreur ou il peut visualiser toute sa commande !!
 
-function ajout_Produit($H, $L, $l, $P, $Nom, $Vendeur, $Prix, $Desc, $Image, $Quantite){
+function ajout_Produit($H, $L, $l, $P, $Nom, $Prix, $Desc, $Image, $Quantite, $ID_Vendeur){
 
     var_dump($Image);
     //On n'a que le nom de l'image
 
     global $link;
 
-    $ajt_prod = "INSERT INTO produit (Prix, Img, Descript, Quantite, Nom, Hauteur, Largeur, Longueur, Poids) VALUES ('$Prix', '$Image', '$Desc', '$Quantite', '$Nom', '$H', '$l', '$L', '$P')";
+    $path = 'C:/wamp64/www/projet_pedago/img/produits/';
+    $pathprod = 'C:/wamp64/www/projet_pedago/img/produits/' . $Image;
+
+    $infoImage = getimagesize($pathprod);
+
+    $newL = 300;
+    $newH = 300;
+
+
+
+    if ($infoImage !== false) {
+        // $infoImage[2] contient le type de l'image
+        // 1 pour les images GIF, 2 pour les images JPEG, et 3 pour les images PNG
+        if ($infoImage[2] === IMAGETYPE_PNG) {
+
+            $imageSource = imagecreatefrompng($pathprod);
+
+            // Obtenir la taille actuelle de l'image
+            $largeurOriginale = imagesx($imageSource);
+            $hauteurOriginale = imagesy($imageSource);
+
+            // Créer une nouvelle image vide avec la taille souhaitée
+            $nouvelleImage = imagecreatetruecolor($newL, $newH);
+
+            // Redimensionner l'image d'origine vers la nouvelle image avec la fonction imagecopyresampled
+            imagecopyresampled(
+                $nouvelleImage, // Image de destination (nouvelle image)
+                $imageSource,   // Image source (image d'origine)
+                0, 0,           // Coordonnées x et y de la destination
+                0, 0,           // Coordonnées x et y de la source (commence à partir du coin supérieur gauche)
+                $newL, // Nouvelle largeur de la destination
+                $newH, // Nouvelle hauteur de la destination
+                $largeurOriginale, // Largeur de la source (image d'origine)
+                $hauteurOriginale  // Hauteur de la source (image d'origine)
+            );
+
+            // Enregistrer la nouvelle image dans un fichier ou afficher directement sur la page
+            $Image = "rd".$Image;
+            $newpath = $path.$Image;
+            imagepng($nouvelleImage, $newpath);
+
+            // Libérer la mémoire en supprimant les images de la mémoire
+            imagedestroy($imageSource);
+            imagedestroy($nouvelleImage);
+
+        } elseif ($infoImage[2] === IMAGETYPE_JPEG) {
+
+            $imageSource = imagecreatefromjpeg($pathprod);
+
+            // Obtenir la taille actuelle de l'image
+            $largeurOriginale = imagesx($imageSource);
+            $hauteurOriginale = imagesy($imageSource);
+
+            // Créer une nouvelle image vide avec la taille souhaitée
+            $nouvelleImage = imagecreatetruecolor($newL, $newH);
+
+            // Redimensionner l'image d'origine vers la nouvelle image avec la fonction imagecopyresampled
+            imagecopyresampled(
+                $nouvelleImage, // Image de destination (nouvelle image)
+                $imageSource,   // Image source (image d'origine)
+                0, 0,           // Coordonnées x et y de la destination
+                0, 0,           // Coordonnées x et y de la source (commence à partir du coin supérieur gauche)
+                $newL, // Nouvelle largeur de la destination
+                $newH, // Nouvelle hauteur de la destination
+                $largeurOriginale, // Largeur de la source (image d'origine)
+                $hauteurOriginale  // Hauteur de la source (image d'origine)
+            );
+
+            // Enregistrer la nouvelle image dans un fichier ou afficher directement sur la page
+            $Image = "rd".$Image;
+            $newpath = $path.$Image;
+            imagejpeg($nouvelleImage, $newpath);
+
+            // Libérer la mémoire en supprimant les images de la mémoire
+            imagedestroy($imageSource);
+            imagedestroy($nouvelleImage);
+
+        } else {
+            echo 'L\'image n\'est ni de type PNG ni de type JPEG.';
+        }
+    } else {
+        echo 'Impossible de lire les informations de l\'image.';
+    }
+
+    $ajt_prod = "INSERT INTO produit (Prix, Img, Descript, Quantite, Nom, Hauteur, Largeur, Longueur, Poids, ID_Vendeur) VALUES ('$Prix', '$Image', '$Desc', '$Quantite', '$Nom', '$H', '$l', '$L', '$P', $ID_Vendeur)";
 
     // Exécution de la requête
     if (mysqli_query($link, $ajt_prod)) {
@@ -258,11 +342,11 @@ function ajout_Produit($H, $L, $l, $P, $Nom, $Vendeur, $Prix, $Desc, $Image, $Qu
 
 }
 
-function update_Produit($H, $L, $l, $P, $Nom, $Vendeur, $Prix, $Desc, $Image, $Quantite, $ID){
+function update_Produit($H, $L, $l, $P, $Nom, $Prix, $Desc, $Image, $Quantite, $ID, $ID_Vendeur){
 
     global $link;
 
-    $upd_prod = "UPDATE produit SET Prix = $Prix, Img = $Image, Descript = $Desc, Quantite = $Quantite, Nom = $Nom, Hauteur = $H, Largeur = $l, Longueur = $L, Poids = $P WHERE ID = $ID";
+    $upd_prod = "UPDATE produit SET Prix = $Prix, Img = '$Image', Descript = '$Desc', Quantite = $Quantite, Nom = '$Nom', Hauteur = $H, Largeur = $l, Longueur = $L, Poids = $P, ID_Vendeur = $ID_Vendeur WHERE ID = $ID";
 
     // Exécution de la requête
     if (mysqli_query($link, $upd_prod)) {
@@ -286,11 +370,11 @@ function suppr_Produit($ID){
     }
 }
 
-function ajout_Compte_Cli($Prénom, $Nom, $Mail, $Tel, $Adresse, $Date_contrat, $Mot_de_Passe, $numero_CB, $date_CB, $crypto_CB){
+function ajout_Compte_Cli($Prénom, $Nom, $Mail, $Tel, $Adresse, $Date_contrat, $mdp, $numero_CB, $date_CB, $crypto_CB){
 
     global $link;
 
-    $ajt_cli = "INSERT INTO client (Prénom, Nom, Mail, Tel, Adresse, Date_contrat, Mot_de_Passe, numero_CB, date_CB, crypto_CB) VALUES ($Prénom, $Nom, $Mail, $Tel, $Adresse, $Date_contrat, $Mot_de_Passe, $numero_CB, $date_CB, $crypto_CB)";
+    $ajt_cli = "INSERT INTO client (Prénom, Nom, Mail, Tel, Adresse, Date_contrat, mdp, numero_CB, date_CB, crypto_CB) VALUES ('$Prénom', '$Nom', '$Mail', '$Tel', '$Adresse', $Date_contrat, '$mdp', $numero_CB, $date_CB, $crypto_CB)";
 
     // Exécution de la requête
     if (mysqli_query($link, $ajt_cli)) {
@@ -300,11 +384,11 @@ function ajout_Compte_Cli($Prénom, $Nom, $Mail, $Tel, $Adresse, $Date_contrat, 
     }
 }
 
-function ajout_Compte_Liv($Prénom, $Nom, $Mail, $Adresse, $Permis, $Mot_de_Passe, $Type_Véhicule, $Cmd_a_Livrer, $Temps_Tournee){
+function ajout_Compte_Liv($Prénom, $Nom, $Mail, $Adresse, $Permis, $mdp, $Type_Véhicule, $Cmd_a_Livrer, $Temps_Tournee){
 
     global $link;
 
-    $ajt_li = "INSERT INTO client (Prénom, Nom, Cmd_a_Livrer, Adresse, Permis, Type_Véhicule, Temps_Tournee, email, mdp) VALUES ($Prénom, $Nom, $Cmd_a_Livrer, $Adresse, $Permis, $Type_Véhicule, $Temps_Tournee, $Mail, $Mot_de_Passe)";
+    $ajt_li = "INSERT INTO livreur (Prénom, Nom, Cmd_a_Livrer, Adresse, Permis, Type_Véhicule, Temps_Tournee, email, mdp) VALUES ('$Prénom', '$Nom', $Cmd_a_Livrer, '$Adresse', '$Permis', '$Type_Véhicule', $Temps_Tournee, '$Mail', $mdp)";
 
     // Exécution de la requête
     if (mysqli_query($link, $ajt_cliv)) {
@@ -328,11 +412,11 @@ function update_Compte_Cli($Prénom, $Nom, $Mail, $Tel, $Adresse, $numero_CB, $d
     }
 }
 
-function update_Compte_Vend($Nom, $Mail, $Adresse, $ID_Produit_Vendu, $admin, $tel, $Prenom, $ID){
+function update_Compte_Vend($Nom, $Mail, $admin, $tel, $Prenom, $ID){
 
     global $link;
 
-    $upd_vend = "UPDATE client SET Prenom = $Prenom, Nom = $Nom, ID_Produit_Vendu = $ID_Produit_Vendu, admin = $admin, email = $Mail, tel = $tel WHERE ID = $ID";
+    $upd_vend = "UPDATE vendeur SET Prenom = '$Prenom', Nom = '$Nom', ouiadmin = $admin, email = '$Mail', tel = $tel WHERE ID = $ID";
 
     // Exécution de la requête
     if (mysqli_query($link, $upd_vend)) {
@@ -342,11 +426,11 @@ function update_Compte_Vend($Nom, $Mail, $Adresse, $ID_Produit_Vendu, $admin, $t
     }
 }
 
-function update_Compte_Liv($Prénom, $Nom, $Mail, $Adresse, $Permis, $Type_Véhicule, $Cmd_a_Livrer, $Temps_Tournee){
+function update_Compte_Liv($Prénom, $Nom, $Mail, $Adresse, $Permis, $Type_Véhicule, $ID){
 
     global $link;
 
-    $upd_liv = "UPDATE client SET Prénom = $Prénom, Nom = $Nom, email = $Mail, Adresse = $Adresse, Permis = $Permis, Type_Véhicule = $Type_Véhicule, Cmd_a_Livrer = $Cmd_a_Livrer, Temps_Tournee = $Temps_Tournee WHERE ID = $ID";
+    $upd_liv = "UPDATE livreur SET Prénom = '$Prénom', Nom = '$Nom', email = '$Mail', Adresse = '$Adresse', Permis = '$Permis', Type_Véhicule = '$Type_Véhicule' WHERE ID = $ID";
 
     // Exécution de la requête
     if (mysqli_query($link, $upd_liv)) {

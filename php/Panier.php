@@ -7,6 +7,22 @@
 </head>
 <?php
     include("header.php");
+    
+    if (isset($_SESSION['Connexion'][0])) {
+        if ($_SESSION['Connexion'][1] == 'client') {
+            $id_client = $_SESSION['Connexion'][0];
+            if (isset($_POST['commander'])) {
+                //passer commande
+            }
+        }else{
+            header('Location: /projet_pedago/php/accueil.php');
+            die();
+        }
+    }
+
+    $id = $_SESSION['Connexion'][0];
+
+    var_dump(getCart($id));
 ?>
 
 <body>
@@ -15,6 +31,7 @@
         <div id="cart-items">
 
             <ul class="cart">
+
                 <li>
                     <div class="cart-item">
                     <div class="item-image">
@@ -28,20 +45,26 @@
                         </div>
                     </div>
                 </li>
-                <li>
+                <?php
+            global $pathprod;
+                foreach ($articles as $item){
+                    print('<li>
                     <div class="cart-item">
-                    <div class="item-image">
-                        <img src="item1.jpg" alt="Item 1">
-                    </div>            
-                        <div class="item-details">
-                            <h3>Produit 2</h3>
-                            <p>Prix: 15.00€</p>
-                            <input type="number" value="1" min="1" class="item-quantity">
-                            <button class="remove-button">supprimer</button>
-                        </div>
-                    </div>
-                </li>
-                <!-- pour ajouter des produits bande de nuls -->
+                    <div class="item-image">');
+                    // WIP //
+                    print('<img src='.$pathprod.$item['Img'].'>');
+                    print('<h2>' . $item['Nom'] . '</h2><br>');
+                    print('<p>' . $item['Descript'] . '</p>');
+                    print($item['Prix'] . '€<br>');
+                    print('En stock : ' . $item['Quantite'] . '<br>');
+                    print('
+                        <form action="/projet_pedago/php/accueil.php" method="POST">
+                        <button class="btn" type="submit" name="commander" value="' . $item['ID'] . '">Ajouter au panier</button>
+                        </form>
+                        ');
+                    print("</div>");
+            }
+            ?>
             </ul>
         </div>
 
@@ -57,7 +80,8 @@
     <script src="/projet_pedago/js/panier.js"></script>
 
 </body>
+
+</html>
 <?php
     include("footer.php");
 ?>
-</html>

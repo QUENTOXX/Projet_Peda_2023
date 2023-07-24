@@ -2,13 +2,12 @@
 include("header.php");
 include_once("fonction.php");
 
-$articlePromo = array_slice($GLOBALS['produits'], 0, 6);
+$articlePromo = array_slice($GLOBALS['produits'], 0, 12);
 
 if (isset($_SESSION['Connexion'][0])) {
     if ($_SESSION['Connexion'][1] == 'client') {
         $id_client = $_SESSION['Connexion'][0];
         if (isset($_POST['commander'])) {
-            var_dump($_POST['commander']);
             ajout_panier($_POST['commander'], $id_client, 1);
             header('Location: /projet_pedago/php/accueil.php');
         }
@@ -50,27 +49,31 @@ if (isset($_SESSION['Connexion'][0])) {
             <?php
             global $pathprod;
 
-            foreach ($articlePromo as $item) {
-                print('<div class="product">');
-                print('<img src='.$pathprod.$item['Img'].'>');
-                print('<h2>' . $item['Nom'] . '</h2><br>');
-                print('<p>' . $item['Descript'] . '</p>');
-                print($item['Prix'] . '€<br>');
-                print('En stock : ' . $item['Quantite'] . '<br>');
-                print('
-                    <form action="/projet_pedago/php/accueil.php" method="POST">
-                    <button class="btn" type="submit" name="commander" value="' . $item['ID'] . '">Ajouter au panier</button>
-                    </form>
-                    ');
-                print("</div>");
+            for ($i = 0; $i < 3; $i++) {
+                print("<div>");
+                for ($j = 0; $j < 4; $j++) {
+                    $item = $articlePromo[$i*4 + $j];
+                    print('<div class="product">');
+                    print('<img src='.$pathprod.$item['Img'].'>');
+                    print('<h2>' . $item['Nom'] . '</h2><br>');
+                    print('<p>' . $item['Descript'] . '</p>');
+                    print($item['Prix'] . '€<br>');
+                    print('En stock : ' . $item['Quantite'] . '<br>');
+                    print('
+                        <form action="/projet_pedago/php/accueil.php" method="POST">
+                        <button class="btn" type="submit" name="commander" value="' . $item['ID'] . '">Ajouter au panier</button>
+                        </form>
+                        ');
+                    print("</div>");
             }
+                print("</div><br>");
+        }
             ?>
         </div>
     </section>
 
 </body>
+</html>
 <?php
 include("footer.php");
 ?>
-
-</html>

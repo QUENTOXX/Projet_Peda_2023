@@ -4,13 +4,25 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Searchpage</title>
-    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/searchpagecss.css" href="/projet_pedago/css/Main.css">
+    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/searchpagecss.css">
+    <link rel="stylesheet" type="text/css" href="/projet_pedago/css/Main.css">
 </head>
 <?php
   include ("header.php");
 ?>
 <body>
-   <h1>Résultats de recherche</h1>
+<div id="container">
+      <h1>Résultats de recherche</h1>
+
+      <div id="filters">
+          <label for="sort_by">Filtrer par:</label>
+          <select id="sort_by">
+              <option value="pertinence">Pertinence</option>
+              <option value="price_high_low">Prix: Décroissant</option>
+              <option value="price_low_high">Prix: Croissant</option>
+          </select>
+      </div>
+
    <?php
 
   $search= isset($_GET['search']) ? $_GET['search'] : "";
@@ -27,17 +39,8 @@
     }
 }
 ?>    
-  <!--
-        </div>
-        <div id="pagination">
-            <a href="#" class="active">1</a>
-            <a href="#">2</a>
-            <a href="#">3</a>
-            <a href="#">4</a>
-            <a href="#">5</a>
-          </div>
-       --> 
-      </body>
+</body>
+</html>
 <?php 
   include ("footer.php");
 ?>

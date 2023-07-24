@@ -11,7 +11,7 @@
       die();
     }
 
-    $ID_vendeur = $_SESSION['Connexion'][1];
+    $ID_vendeur = $_SESSION['Connexion'][0];
     $erreur = "";
 
     if(isset($_POST['ajouter'])){
@@ -58,7 +58,7 @@
         if(in_array($image['type'], $allowTypes)){
           $pathprod = 'C:/wamp64/www/projet_pedago/img/produits/' . $image['name'];
           if(move_uploaded_file($image["tmp_name"], $pathprod)){
-            ajout_Produit($hauteur, $longueur, $largeur, $poids, $name, $ID_vendeur, $prix, $description, $image['name'], $quantity);
+            ajout_Produit($hauteur, $longueur, $largeur, $poids, $name, $prix, $description, $image['name'], $quantity, $ID_vendeur);
             $erreur .= "Le produit à bien été ajouté";
         }
       }
@@ -112,22 +112,34 @@
 
         <div class="product-list">
             <h2>Liste des produits</h2>
+
             <ul>
-                <li>
-                    <div class="product-image">
-                        <img src="#" alt="Produit 1">
-                    </div>
-                    <div class="product-details">
-                        <h3>Nom du produit</h3>
-                        <p class="product-description">Description</p>
-                        <p class="product-price">Prix</p>
-                        <p class="product-quantity">Quantité</p>
-                        <p class="product-dimensions">Dimensions</p>
-                        <p class="product-weight">Poids</p>
-                        <button class="edit-btn">Modifier</button>
-                        <button class="delete-btn">Supprimer</button>
-                    </div>
-                </li>
+                <?php
+                global $pathprod;
+                $all_Product = recu_Produit_By_Vendeur($ID_vendeur);
+
+                foreach ($all_Product as $value) {
+                    ?>
+                    <li>
+                        <div class="product-image">
+                            <img scr="<?php echo(htmlspecialchars($pathprod.$value["Img"]));?>" alt="Bruh">
+                        </div>
+                        <div class="product-details">
+                            <h3><?php echo(htmlspecialchars($value["Nom"]));?></h3>
+
+                            <p>Description <input type="text" name="md_desc" value="<?php echo(htmlspecialchars($value["Descript"]));?>" required></p>
+                            <p>Prix <input type="number" name="md_prix" value="<?php echo(htmlspecialchars($value["Prix"]));?>" required></p>
+                            <p>Quantité <input type="number" name="md_qtt" value="<?php echo(htmlspecialchars($value["Quantite"]));?>" required></p>
+                            <p>Dimention : Hauteur <input type="number" name="md_H" value="<?php echo(htmlspecialchars($value["Hauteur"]));?>" required>
+                            Longueur <input type="number" name="md_L" value="<?php echo(htmlspecialchars($value["Longueur"]));?>" required>
+                            Largeur <input type="number" name="md_l" value="<?php echo(htmlspecialchars($value["Largeur"]));?>" required>
+                            </p>
+                            <p>Poids <input type="number" name="md_P" value="<?php echo(htmlspecialchars($value["Poids"]));?>" required></p>
+                            <button class="edit-btn">Modifier</button>
+                            <button class="delete-btn">Supprimer</button>
+                        </div>
+                    </li>
+                    <?php } ?>
             </ul>
         </div>
     </div>
@@ -149,7 +161,8 @@
         });
     </script>
 </body>
+
+</html>
 <?php
   include("footer.php")
 ?>
-</html>

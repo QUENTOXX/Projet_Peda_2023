@@ -62,7 +62,8 @@
 
     <script src="/projet_pedago/js/panier.js"></script>
 </body>
+
+</html>
 <?php
     include("footer.php");
 ?>
-</html>

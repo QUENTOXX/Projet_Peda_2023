@@ -22,15 +22,51 @@
 
         $product= getProduitsByID($rechercheId);
 
-        $nom = $product["Nom"];
-        $qtt = $product["Quantite"];
-        $prix = $product["Prix"];
-        $img = $product["Image"];
+        if ($product == FALSE) {
+            echo("Aucun produit avec cet ID !");
+            $nom = "";
+            $qtt = "";
+            $prix = "";
+            $img = "";
+            $id = "";
+        }else{
+
+            $nom = $product["Nom"];
+            $qtt = $product["Quantite"];
+            $prix = $product["Prix"];
+            $img = $product["Img"];
+            $id = $product["ID"];
+        }
+
     }else{
         $nom = "";
         $qtt = "";
         $prix = "";
         $img = "";
+        $id = "";
+    }
+
+    if (isset($_POST['modif'])){
+
+        $ID = $_POST["ID"];
+
+        $product= getProduitsByID($ID);
+
+        var_dump($product);
+
+        $H = $product["Hauteur"];
+        $L = $product["Longueur"];
+        $l = $product["Largeur"];
+        $P = $product["Poids"];
+        $Nom = $_POST['name'];
+        //$Vendeur = $product["Vendeur"];
+        $Prix = $_POST['price'];
+        $Desc = $product["Descript"];
+        $Image = $product["Img"];
+        $Quantite = $_POST['quantite'];
+
+        update_Produit($H, $L, $l, $P, $Nom, $Prix, $Desc, $Image, $Quantite, $ID);
+
     }
 
     ?>
@@ -97,12 +133,9 @@
                     <input type="text" name = "name" placeholder="Nom de l'article" id="title" value="<?php echo(htmlspecialchars($nom));?>">
                     <input type="number" name = "quantite" placeholder="Quantité" id="quant" value="<?php echo(htmlspecialchars($qtt));?>">
                     <input type="number" name = "price" placeholder="Prix" id="price" value="<?php echo(htmlspecialchars($prix));?>">
-
-
-
-
+                    <input type="hidden" name="ID" value="<?php echo(htmlspecialchars($id));?>">
                 
-                <button type="submit" class="add" > Enregistrer les modifications </button>
+                <input type="submit" class="add" name="modif" value="Enregistrer les modifications" >
             </form>
 
 

@@ -12,7 +12,7 @@ include ("header.php");
 ?>
 <body>
     <header>
-        <h1>Mes Commandes</h1>
+      <h1>Mes Commandes</h1>
       </header>
     
       <div id="commandes-container">
@@ -34,7 +34,8 @@ include ("header.php");
         
       </div>
 </body>
+
+</html>
 <?php
 include ("footer.php");
 ?>
-</html>

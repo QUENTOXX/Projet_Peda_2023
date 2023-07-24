@@ -130,6 +130,13 @@ function CheminLePlusCourt($points){
     $permutations = Permu($allPoints);
 
     foreach ($permutations as $permutation) {
+        // Check if the first point in the permutation is the starting point of the graph
+        if ($permutation[0] !== $allPoints[0]) {
+            // If not, rearrange the permutation to start with the first point
+            $index = array_search($allPoints[0], $permutation);
+            array_push($permutation, ...array_splice($permutation, 0, $index));
+        }
+
         $distance = 0;
         $Complet = true;
 
