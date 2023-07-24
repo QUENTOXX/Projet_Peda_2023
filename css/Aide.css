@@ -1,63 +1,53 @@
-.help-form{
 
-    width: 60%;
-    margin-left: 20%;
-    height: 500px;
-    display: flex;
-    flex: center;
-    justify-content: center;
-    margin-top: 50px;
-    background: #fff;
-    border-radius: 7px;
-    box-shadow: 0 15px 35px rgba(0,0,0,0.4);
-    background-color: #dad9d9;
-
+.help-form {
+  width : 60%;
+  margin-left : 20%;
+  height : 500px;
+  display : flex;
+  justify-content : center;
+  margin-top : 50px;
+  background : #fff;
+  border-radius : 7px;
+  box-shadow : 0 15px 35px rgb(0, 0, 0, 0.4);
+  background-color : #dad9d9;
   }
-
-.helpinput{
-
-    display: block!important;
-    margin-bottom: 50px;
-
+  .helpinput {
+  display : block !important ;
+  margin-bottom : 50px;
   }
-
-.helpinput:first-child {
-
-    width: 300px;
-    height: 30px;
-    font-size: 15px;
-    font-family: 'Courier New', Courier, monospace;
-    font-weight: bold;
-    margin-top: 70px;
-
-}
-
+  .helpinput:first-child {
+  width : 300px;
+  height : 30px;
+  font-size : 15px;
+  font-family : 'Courier New', Courier, monospace;
+  font-weight : bold;
+  margin-top : 70px;
+  }
   #textareaInput {
-    display: block;
-    width: 100%;
-    height: 100px; 
-    padding: 10px;
-    font-size: 14px;
-    line-height: 1.5;
-    border: 1px solid #ccc;
-    border-radius: 5px;
-    resize: vertical;
+  display : block;
+  width : 100%;
+  height : 100px;
+  padding : 10px;
+  font-size : 14px;
+  line-height : 1.5;
+  border : #ccc solid 1px;
+  border-radius : 5px;
+  resize : vertical;
+  }
+  .button {
+  display : flex;
+  justify-content : center;
+  align-items : center;
+  height : 20vh;
+  }
+  .help {
+  text-decoration : none;
+  color : rgb(255, 255, 255, 0.8);
+  background : #e47911;
+  padding : 15px 40px;
+  border-radius : 4px;
+  font-weight : normal;
+  text-transform : uppercase;
+  transition : all 0.2s ease-in-out;
   }
   
-  .button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    height: 20vh;
-    }
-    
-    .help{
-    text-decoration: none;
-    color: rgba(255, 255, 255, 0.8);
-    background: #e47911;
-    padding: 15px 40px;
-    border-radius: 4px;
-    font-weight: normal;
-    text-transform: uppercase;
-    transition: all 0.2s ease-in-out;
-    }

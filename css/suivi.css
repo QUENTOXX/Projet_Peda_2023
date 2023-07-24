@@ -1,0 +1,36 @@
+.notification-container{
+
+    width: 80%;
+    height: 200px;
+    margin-top: 50px;
+    margin-left: 10%;
+    margin-bottom: 10%;
+    background-color: #fff;
+    display: flex;
+    position: relative; 
+    align-items: center;
+    justify-content: center;
+    border-radius: 10px;
+    box-shadow: 0 2px 7px #232f3e;
+
+
+    }
+    
+    .notification{
+
+
+        width: 80%;
+        height: 80px; 
+        margin: 20px auto; 
+        background-color: #fff;
+        position: absolute; 
+        top: 0; 
+        left: 0; 
+        right: 0;
+        border-radius: 10px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        box-shadow: 0 2px 7px #232f3e;
+        font-family: 'Courier New', Courier, monospace;
+} 

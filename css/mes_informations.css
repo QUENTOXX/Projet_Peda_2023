@@ -1,59 +1,43 @@
 .info-container {
+  width: 60%;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ccc;
+  border-radius: 5px;
+}
+
+h1, h2 {
+  text-align: center;
+}
+
+.account-form {
   display: flex;
   flex-direction: column;
   align-items: center;
-  max-width: 400px;
-  margin: 0 auto;
-  padding: 20px;
-  background-color: #ffffff;
-  border: 1px solid #e7e7e7;
-  border-radius: 5px;
-  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
-}
-
-h1 {
-  font-size: 24px;
-  text-align: center;
-  margin-bottom: 20px;
-}
-
-h2 {
-  font-size: 20px;
-  margin-bottom: 15px;
 }
 
 label {
-  display: block;
-  margin-bottom: 5px;
-  font-size: 16px;
+  margin-top: 10px;
 }
 
-input {
+.modifier-input input, select {
   width: 100%;
   padding: 10px;
-  margin-bottom: 10px;
+  margin: 5px 0;
   border: 1px solid #ccc;
   border-radius: 5px;
-  font-size: 16px;
-}
-
-#account-mot_de_passe {
-  border: 2px solid #ff0000;
 }
 
 .account-button {
-  align-items: center;
-  width: 100%;
-  padding: 10px;
-  background-color: #f0c14b;
-  color: #111;
-  font-size: 16px;
-  font-weight: bold;
+  padding: 10px 20px;
+  margin-top: 20px;
+  background-color: #007bff;
+  color: #fff;
   border: none;
   border-radius: 5px;
   cursor: pointer;
 }
 
 .account-button:hover {
-  background-color: #f2b61f;
+  background-color: #0056b3;
 }

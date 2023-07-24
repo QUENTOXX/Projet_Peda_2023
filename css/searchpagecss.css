@@ -1,14 +1,17 @@
-body {
-  margin: 0;
-  padding: 0px;
-  font-family: Arial, sans-serif;
-  background-color: #f0f2f5;
+#container {
+    max-width: 1200px;
+    margin: 0 auto;
+    text-align: center;
+    padding: 20px;
 }
 
 h1 {
     font-size: 24px;
-    text-align: center;
     margin-bottom: 20px;
+}
+
+#filters {
+    margin: 20px 0;
 }
 
 #resultats {
@@ -63,24 +66,4 @@ h1 {
 
 .produit button:hover {
     background-color: #f8a200;
-}
-
-#pagination {
-    text-align: center;
-    margin-top: 20px;
-}
-
-#pagination a {
-    display: inline-block;
-    padding: 10px;
-    background-color: #f0f0f0;
-    color: #111;
-    text-decoration: none;
-    margin-right: 5px;
-    border-radius: 3px;
-    transition: background-color 0.2s ease;
-}
-
-#pagination a.active {
-    background-color: #f9f9f9;
 }
