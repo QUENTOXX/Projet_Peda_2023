@@ -15,7 +15,7 @@
     $erreur = "";
 
     if(isset($_POST['ajouter'])){
-      var_dump($_FILES);
+      
         $name = isset($_POST['name']) ? $_POST['name'] : "";
         $description = isset($_POST['description']) ? $_POST['description'] : "";
         $prix = isset($_POST['prix']) ? $_POST['prix'] : "";
@@ -64,6 +64,42 @@
       }
     }
   }
+
+  if(isset($_POST['sup'])){
+
+    $ID_prod = $_POST['md_ID'];
+    suppr_Produit($ID_prod);
+  }
+
+  if(isset($_POST['modif'])){
+
+    $ID_prod = $_POST['md_ID'];
+    $H = $_POST['md_H'];
+    $L = $_POST['md_L'];
+    $l = $_POST['md_l'];
+    $P = $_POST['md_P'];
+    $Nom = $_POST['md_nom'];
+    $Prix = $_POST['md_prix'];
+    $Desc = $_POST['md_desc'];
+    $Image = isset($_FILES['md_img']) ? $_FILES['md_img'] : "";
+    $Quantite = $_POST['md_qtt'];
+    $ID_Vendeur = $_POST['md_ID_vend'];
+
+    if (empty($Image)) {
+
+      $Image = $_POST['md_oldimg'];
+      update_Produit($H, $L, $l, $P, $Nom, $Prix, $Desc, $Image, $Quantite, $ID_prod, $ID_Vendeur);
+    }else{
+
+      $allowTypes = array('image/jpg','image/png','image/jpeg','image/gif','image/pdf');
+      if(in_array($Image['type'], $allowTypes)){
+        $pathprod = 'C:/wamp64/www/projet_pedago/img/produits/' . $Image['name'];
+        if(move_uploaded_file($Image["tmp_name"], $pathprod)){
+          update_Produit($H, $L, $l, $P, $Nom, $Prix, $Desc, $Image['name'], $Quantite, $ID_prod, $ID_Vendeur);
+        }
+      }
+    }
+  }
 ?>
 
 <!DOCTYPE html>
@@ -84,7 +120,7 @@
             <input type="text" id="product-name" name="name" required>
 
             <label for="product-description">Description :</label>
-            <input type="text" id="product-name" name="description" required>
+            <textarea id="product-desc" name="description" rows="10" cols="50"></textarea>
 
             <label for="product-price">Prix :</label>
             <input type="number" step="0.01" min="0" name="prix" required>
@@ -115,30 +151,37 @@
 
             <ul>
                 <?php
-                global $pathprod;
+                $pathprod = '/projet_pedago/img/produits/';
                 $all_Product = recu_Produit_By_Vendeur($ID_vendeur);
 
                 foreach ($all_Product as $value) {
                     ?>
-                    <li>
-                        <div class="product-image">
-                            <img scr="<?php echo(htmlspecialchars($pathprod.$value["Img"]));?>" alt="Bruh">
-                        </div>
-                        <div class="product-details">
-                            <h3><?php echo(htmlspecialchars($value["Nom"]));?></h3>
+                    <form class="product-form" method="POST" action="" enctype="multipart/form-data">
+                      <li>
+                          <div class="product-image">
+                              <?php print('<img src='.$pathprod.$value['Img'].'>'); ?>
+                              <input type="file" id="product-image" name="md_img" accept="image/*">
+                              <input type="hidden" name="md_oldimg" value="<?php echo(htmlspecialchars($value["Img"])); ?>" required>
+                          </div>
+                          <div class="product-details">
+                              <h3><?php echo(htmlspecialchars($value["Nom"]));?></h3>
 
-                            <p>Description <input type="text" name="md_desc" value="<?php echo(htmlspecialchars($value["Descript"]));?>" required></p>
-                            <p>Prix <input type="number" name="md_prix" value="<?php echo(htmlspecialchars($value["Prix"]));?>" required></p>
-                            <p>Quantité <input type="number" name="md_qtt" value="<?php echo(htmlspecialchars($value["Quantite"]));?>" required></p>
-                            <p>Dimention : Hauteur <input type="number" name="md_H" value="<?php echo(htmlspecialchars($value["Hauteur"]));?>" required>
-                            Longueur <input type="number" name="md_L" value="<?php echo(htmlspecialchars($value["Longueur"]));?>" required>
-                            Largeur <input type="number" name="md_l" value="<?php echo(htmlspecialchars($value["Largeur"]));?>" required>
-                            </p>
-                            <p>Poids <input type="number" name="md_P" value="<?php echo(htmlspecialchars($value["Poids"]));?>" required></p>
-                            <button class="edit-btn">Modifier</button>
-                            <button class="delete-btn">Supprimer</button>
-                        </div>
-                    </li>
+                              <p>Description <textarea name="md_desc" id="desc" rows="8" cols="70" required><?php echo($value["Descript"]); ?></textarea></p>
+                              <p>Prix <input type="number" name="md_prix" value="<?php echo(htmlspecialchars($value["Prix"]));?>" required></p>
+                              <p>Quantité <input type="number" name="md_qtt" value="<?php echo(htmlspecialchars($value["Quantite"]));?>" required></p>
+                              <p>Hauteur <input type="number" name="md_H" value="<?php echo(htmlspecialchars($value["Hauteur"]));?>" required>
+                              Longueur <input type="number" name="md_L" value="<?php echo(htmlspecialchars($value["Longueur"]));?>" required>
+                              Largeur <input type="number" name="md_l" value="<?php echo(htmlspecialchars($value["Largeur"]));?>" required>
+                              </p>
+                              <p>Poids <input type="number" name="md_P" value="<?php echo(htmlspecialchars($value["Poids"]));?>" required></p>
+                              <input type="hidden" name="md_ID" value="<?php echo $value["ID"]; ?>" required>
+                              <input type="hidden" name="md_nom" value="<?php echo(htmlspecialchars($value["Nom"])); ?>" required>
+                              <input type="hidden" name="md_ID_vend" value="<?php echo $value["ID_Vendeur"]; ?>" required>
+                              <button type="submit" name = "modif" class="edit-btn">Modifier</button>
+                              <button type="submit" name = "sup" class="delete-btn">Supprimer</button>
+                          </div>
+                        </li>
+                      </form>
                     <?php } ?>
             </ul>
         </div>
@@ -164,5 +207,6 @@
 
 </html>
 <?php
-  include("footer.php")
+  include("footer.php");
+  //get_footer();
 ?>

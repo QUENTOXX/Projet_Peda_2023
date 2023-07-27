@@ -115,6 +115,7 @@ include("header.php");
             <select id="type" name="type">
               <option value="Client">Client</option>
               <option value="Vendeur">Vendeur</option>
+              <option value="Livreur">Livreur</option>
             </select>
 
             <div class="button"><input class="register" type="submit" id="valider" name="valider" value="S'inscrire">

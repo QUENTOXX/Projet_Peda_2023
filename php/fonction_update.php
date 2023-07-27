@@ -1,4 +1,4 @@
-<?php
+    <?php
 
 require_once "config.php";
 require_once "connection_mysqli.php";
@@ -94,7 +94,7 @@ function assignation_cmd($id_cmd){
 
     $obj_cmd = mysqli_fetch_object($res_cmd);
 
-    if ($obj_cmd->Vendeur != NULL || $obj_cmd->Vendeur != "") {
+    if ($obj_cmd->ID_Livreur != NULL && $obj_cmd->ID_Livreur != "") {
         echo "Commande deja assigner";
 
         return NULL;
@@ -156,23 +156,23 @@ function assignation_cmd($id_cmd){
 function attribue_cmd($id_client){
     global $connexion;
 
-    $req = $connexion->prepare("SELECT ID, Valide FROM commande WHERE ID_Client = :id_client AND Valide = '0'");
-    $req->bindValue(":id_client", $id_client);
-    $req->execute();
-    $res=$req->fetch();
-    $req->closeCursor();
-    if($res){
-        return $res["ID"];
+    $ID = getIDcmd($id_client);
+
+    if($ID){
+        return $ID;
     }
-    $req = $connexion->prepare("INSERT INTO commande (ID_Client) VALUES  ID_Client = :id_client");
+
+    $req = $connexion->prepare("INSERT INTO commande (ID_Client) VALUES  (:id_client)");
     $req->bindValue(":id_client", $id_client);
     $req->execute();
     $req->closeCursor();
-    attribue_cmd($id_client);
+    
+    return getIDcmd($id_client);
 }
 
 function ajout_panier($id_produit,$id_client,int $quantite = 1){
     global $connexion;
+
     $cmd = attribue_cmd($id_client);
     $res = $connexion->query("SELECT * FROM achats WHERE ID_produit = '$id_produit' AND ID_commande = '$cmd'");
     $res = $res->fetch();
@@ -194,11 +194,11 @@ function ajout_panier($id_produit,$id_client,int $quantite = 1){
     $req->closeCursor();
 }
 
-function confirm_panier($id_cmd){
+function confirm_panier($id_client){
     global $link;
 
+    $id_cmd = getIDcmd($id_client);
 
-    // Vérifier que la commande est valide (Vendeur, Prix)
     $sql_cmd = "SELECT * FROM commande WHERE ID = $id_cmd";
     $res_cmd = mysqli_query($link, $sql_cmd);
     $obj_cmd = mysqli_fetch_object($res_cmd);
@@ -210,18 +210,35 @@ function confirm_panier($id_cmd){
         return null;
     }
 
-    //verif si produit existe encore en nombre 
+    //verif si produit existe encore en nombre et elever la qtt 
 
-    $sql_achat = "SELECT * FROM commande WHERE ID = $id_cmd";
-    $res_achat = mysqli_query($link, $sql_achat);
-    $obj_achat = mysqli_fetch_object($res_achat);
-    $achat_Vend = $obj_achat->ID_vendeur;
-    $achat_Prix = $obj_achat->Prix;
+    $produits_achats = getCart($id_client);
+    //boucle
+    //$produits_achats[$i]['ID_produit'];
 
-    if ($achat_Prix == null || $achat_Prix == "" || $achat_Vend == null || $achat_Vend == "") {
-        echo"Prix ou vendeur manquant !!";
+    foreach ($produits_achats as $value) {
 
-        return null;
+        $id = $value['ID_produit'];
+        $sql_prod = "SELECT * FROM produit WHERE ID = $id";
+        $res_prod = mysqli_query($link, $sql_prod);
+        $obj_prod = mysqli_fetch_object($res_prod);
+        $qtt_prod = $obj_prod->Quantite;
+
+        if ($value['quantite'] > $qtt_prod) {
+            
+            echo("Produit $obj_prod->Nom non disponible !");
+            return NULL;
+        }
+
+        $qtt = $qtt_prod - $value['quantite'];
+        $maj_prod = "UPDATE produit SET Quantite = $qtt WHERE ID = $id";
+
+            // Exécution de la requête
+        if (mysqli_query($link, $maj_prod)) {
+            echo "Produit OK !";
+        } else {
+            echo "Erreur lors de l'exécution de la requête" . $link->error;
+        }
     }
     
     // changer valid 0-> 1 dans commande
@@ -242,9 +259,6 @@ function confirm_panier($id_cmd){
 
 function ajout_Produit($H, $L, $l, $P, $Nom, $Prix, $Desc, $Image, $Quantite, $ID_Vendeur){
 
-    var_dump($Image);
-    //On n'a que le nom de l'image
-
     global $link;
 
     $path = 'C:/wamp64/www/projet_pedago/img/produits/';
@@ -252,10 +266,15 @@ function ajout_Produit($H, $L, $l, $P, $Nom, $Prix, $Desc, $Image, $Quantite, $I
 
     $infoImage = getimagesize($pathprod);
 
-    $newL = 300;
+    $imgL = $infoImage[0];
+    $imgH = $infoImage[1];
+
     $newH = 300;
 
+    //$ratio = ($newH * $imgH)/100;
+    $ratio = ($newH / $imgH);
 
+    $newL = $imgL * $ratio;
 
     if ($infoImage !== false) {
         // $infoImage[2] contient le type de l'image
@@ -292,6 +311,11 @@ function ajout_Produit($H, $L, $l, $P, $Nom, $Prix, $Desc, $Image, $Quantite, $I
             imagedestroy($imageSource);
             imagedestroy($nouvelleImage);
 
+            // Supprimer la première image
+            if (file_exists($pathprod)) {
+                unlink($pathprod);
+            }
+
         } elseif ($infoImage[2] === IMAGETYPE_JPEG) {
 
             $imageSource = imagecreatefromjpeg($pathprod);
@@ -324,6 +348,11 @@ function ajout_Produit($H, $L, $l, $P, $Nom, $Prix, $Desc, $Image, $Quantite, $I
             imagedestroy($imageSource);
             imagedestroy($nouvelleImage);
 
+            // Supprimer la première image
+            if (file_exists($pathprod)) {
+                unlink($pathprod);
+            }
+
         } else {
             echo 'L\'image n\'est ni de type PNG ni de type JPEG.';
         }
@@ -346,6 +375,105 @@ function update_Produit($H, $L, $l, $P, $Nom, $Prix, $Desc, $Image, $Quantite, $
 
     global $link;
 
+    $path = 'C:/wamp64/www/projet_pedago/img/produits/';
+    $pathprod = 'C:/wamp64/www/projet_pedago/img/produits/' . $Image;
+
+    $infoImage = getimagesize($pathprod);
+
+    $imgL = $infoImage[0];
+    $imgH = $infoImage[1];
+
+    $newH = 300;
+
+    //$ratio = ($newH * $imgH)/100;
+    $ratio = ($newH / $imgH);
+
+    $newL = $imgL * $ratio;
+
+    if ($infoImage !== false) {
+        // $infoImage[2] contient le type de l'image
+        // 1 pour les images GIF, 2 pour les images JPEG, et 3 pour les images PNG
+        if ($infoImage[2] === IMAGETYPE_PNG) {
+
+            $imageSource = imagecreatefrompng($pathprod);
+
+            // Obtenir la taille actuelle de l'image
+            $largeurOriginale = imagesx($imageSource);
+            $hauteurOriginale = imagesy($imageSource);
+
+            // Créer une nouvelle image vide avec la taille souhaitée
+            $nouvelleImage = imagecreatetruecolor($newL, $newH);
+
+            // Redimensionner l'image d'origine vers la nouvelle image avec la fonction imagecopyresampled
+            imagecopyresampled(
+                $nouvelleImage, // Image de destination (nouvelle image)
+                $imageSource,   // Image source (image d'origine)
+                0, 0,           // Coordonnées x et y de la destination
+                0, 0,           // Coordonnées x et y de la source (commence à partir du coin supérieur gauche)
+                $newL, // Nouvelle largeur de la destination
+                $newH, // Nouvelle hauteur de la destination
+                $largeurOriginale, // Largeur de la source (image d'origine)
+                $hauteurOriginale  // Hauteur de la source (image d'origine)
+            );
+
+            // Enregistrer la nouvelle image dans un fichier ou afficher directement sur la page
+            $Image = "rd".$Image;
+            $newpath = $path.$Image;
+            imagepng($nouvelleImage, $newpath);
+
+            // Libérer la mémoire en supprimant les images de la mémoire
+            imagedestroy($imageSource);
+            imagedestroy($nouvelleImage);
+
+            // Supprimer la première image
+            if (file_exists($pathprod)) {
+                unlink($pathprod);
+            }
+
+        } elseif ($infoImage[2] === IMAGETYPE_JPEG) {
+
+            $imageSource = imagecreatefromjpeg($pathprod);
+
+            // Obtenir la taille actuelle de l'image
+            $largeurOriginale = imagesx($imageSource);
+            $hauteurOriginale = imagesy($imageSource);
+
+            // Créer une nouvelle image vide avec la taille souhaitée
+            $nouvelleImage = imagecreatetruecolor($newL, $newH);
+
+            // Redimensionner l'image d'origine vers la nouvelle image avec la fonction imagecopyresampled
+            imagecopyresampled(
+                $nouvelleImage, // Image de destination (nouvelle image)
+                $imageSource,   // Image source (image d'origine)
+                0, 0,           // Coordonnées x et y de la destination
+                0, 0,           // Coordonnées x et y de la source (commence à partir du coin supérieur gauche)
+                $newL, // Nouvelle largeur de la destination
+                $newH, // Nouvelle hauteur de la destination
+                $largeurOriginale, // Largeur de la source (image d'origine)
+                $hauteurOriginale  // Hauteur de la source (image d'origine)
+            );
+
+            // Enregistrer la nouvelle image dans un fichier ou afficher directement sur la page
+            $Image = "rd".$Image;
+            $newpath = $path.$Image;
+            imagejpeg($nouvelleImage, $newpath);
+
+            // Libérer la mémoire en supprimant les images de la mémoire
+            imagedestroy($imageSource);
+            imagedestroy($nouvelleImage);
+
+            // Supprimer la première image
+            if (file_exists($pathprod)) {
+                unlink($pathprod);
+            }
+
+        } else {
+            echo 'L\'image n\'est ni de type PNG ni de type JPEG.';
+        }
+    } else {
+        echo 'Impossible de lire les informations de l\'image.';
+    }
+
     $upd_prod = "UPDATE produit SET Prix = $Prix, Img = '$Image', Descript = '$Desc', Quantite = $Quantite, Nom = '$Nom', Hauteur = $H, Largeur = $l, Longueur = $L, Poids = $P, ID_Vendeur = $ID_Vendeur WHERE ID = $ID";
 
     // Exécution de la requête
@@ -361,9 +489,11 @@ function suppr_Produit($ID){
     global $link;
 
     $del_prod = "DELETE FROM produit WHERE ID = $ID";
+    $del_achat = "DELETE FROM achat WHERE ID_produit = $ID";
 
     // Exécution de la requête
     if (mysqli_query($link, $del_prod)) {
+        mysqli_query($link, $del_achat);
         echo "Produit supprimer !";
     } else {
         echo "Erreur lors de l'exécution de la requête" . $link->error;
@@ -452,6 +582,41 @@ function suppr_Compte($ID, $type){      // attention bien ecrire le type like bd
     } else {
         echo "Erreur lors de l'exécution de la requête" . $link->error;
     }
+}
+
+function change_quantite($id_client, $id_produit, $quantite){
+    global $connexion;
+
+    $id_commande = getIDcmd($id_client);
+    $req = $connexion->query("UPDATE achats SET quantite = $quantite WHERE ID_commande = $id_commande AND ID_produit = $id_produit");
+}
+
+function supprimerPanier($id_cmd, $id_produit){
+    global $link;
+
+    $del_achat = "DELETE FROM achats WHERE ID_commande = $id_cmd AND ID_produit = $id_produit";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $del_achat)) {
+        echo "Produit supprimer du panier !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête" . $link->error;
+    }
+}
+
+function maj_CB_Add($ID, $num_CB, $date_CB, $crypto_CB, $Adresse){
+
+    global $link;
+
+    $upd_cli = "UPDATE client SET Adresse = '$Adresse', numero_CB = $num_CB, date_CB = '$date_CB', crypto_CB = '$crypto_CB' WHERE ID = $ID";
+
+    // Exécution de la requête
+    if (mysqli_query($link, $upd_cli)) {
+        echo "Client à jour !";
+    } else {
+        echo "Erreur lors de l'exécution de la requête" . $link->error;
+    }
+
 }
 
 ?>

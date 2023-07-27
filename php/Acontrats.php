@@ -1,8 +1,8 @@
 <!DOCTYPE html>
 <html>
-    <?php
-    include ("header.php");
-    ?>
+<?php
+include ("header.php");
+?>
     <head>
 
         <meta charset="UTF-8">
@@ -38,5 +38,5 @@
     </body>
 </html>
 <?php
-        include ("footer.php");
-        ?>
+include ("footer.php");
+?>

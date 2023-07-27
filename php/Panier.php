@@ -4,84 +4,98 @@
 <head>
     <link rel="stylesheet" type="text/css" href="/projet_pedago/css/Paniercss.css">
     <link rel="stylesheet" type="text/css" href="/projet_pedago/css/Main.css">
+    
 </head>
 <?php
     include("header.php");
+
+    $prix = 0;
     
     if (isset($_SESSION['Connexion'][0])) {
         if ($_SESSION['Connexion'][1] == 'client') {
             $id_client = $_SESSION['Connexion'][0];
-            if (isset($_POST['commander'])) {
-                //passer commande
+            $articles = getCart($id_client);
+            if(isset($_POST['commander'])){
+                array_pop($_POST);
+                foreach ($_POST as $key => $value) {
+                    change_quantite($id_client, $key, $value);  
+                }
+                if($articles == null){
+                    echo "Aucun produit dans la commande !";
+                }else{
+                header('Location: /projet_pedago/php/checkout.php');
+                die();
+                }
             }
+            if(isset($_POST['supprimer'])){
+        
+                $id_to_Sup = $_POST['supprimer'];
+                $id_Cmd = getIDcmd($id_client);
+
+                if ($id_Cmd != FALSE) {
+                    supprimerPanier($id_Cmd, $id_to_Sup);
+                }
+            }
+
         }else{
             header('Location: /projet_pedago/php/accueil.php');
             die();
         }
     }
+    else{
+        header('Location: /projet_pedago/php/accueil.php');
+        die();
+    }
 
-    $id = $_SESSION['Connexion'][0];
-
-    var_dump(getCart($id));
 ?>
 
 <body>
     <h1>Panier</h1>
     <div id="cart-container">
-        <div id="cart-items">
+        <form action="" method="POST" enctype="multipart/form-data">
+            <div id="cart-items">
+                <ul class="cart">
+                    <?php
+                    global $pathprod;
+                    if (!$articles){
+                        echo "Aucun article dans le panier !";
+                    }else{
+                    foreach ($articles as $item) {
+                        $produit = getProduitsByID($item['ID_produit']);
+                        $prix += $produit['Prix'] * $item['quantite'];
+                        echo '<li>
+                            <div class="cart-item">
+                                <div class="item-image">';
+                        echo '<img src="' . $pathprod . $produit['Img'] . '">';
+                        echo '</div>';
+                        echo '<div class="item-details">';
+                        echo '<h3>' . $produit['Nom'] . '</h3><br>';
+                        echo '<p>' . $produit['Descript'] . '</p>';
+                        echo $produit['Prix'] . '€<br>';
+                        echo '<input type="number" value="' . $item['quantite'] . '" min="1" name="' . $item['ID_produit'] . '" max="' . $produit['Quantite'] . '" class="item-quantity">';
+                        echo 'En stock : ' . $produit['Quantite'] . '<br>';
+                        echo '</div>';
+                        echo '<button class="remove-button" type="submit" name="supprimer" value="' . $item['ID_produit'] . '">Supprimer</button>';
+                        echo '</div>';
+                        echo '</li>';
+                    }
+                }
+                    ?>
+                </ul>
+            </div>
 
-            <ul class="cart">
+            <div id="cart-total">
+                Total: <?php echo ($prix); ?>€
+            </div>
 
-                <li>
-                    <div class="cart-item">
-                    <div class="item-image">
-                            <img src="item1.jpg" alt="Item 1">
-                        </div>                        
-                        <div class="item-details">
-                            <h3>Produit 1</h3>
-                            <p>Prix: 20.00€</p>
-                            <input type="number" value="1" min="1" class="item-quantity">
-                            <button class="remove-button">Supprimer</button>
-                        </div>
-                    </div>
-                </li>
-                <?php
-            global $pathprod;
-                foreach ($articles as $item){
-                    print('<li>
-                    <div class="cart-item">
-                    <div class="item-image">');
-                    // WIP //
-                    print('<img src='.$pathprod.$item['Img'].'>');
-                    print('<h2>' . $item['Nom'] . '</h2><br>');
-                    print('<p>' . $item['Descript'] . '</p>');
-                    print($item['Prix'] . '€<br>');
-                    print('En stock : ' . $item['Quantite'] . '<br>');
-                    print('
-                        <form action="/projet_pedago/php/accueil.php" method="POST">
-                        <button class="btn" type="submit" name="commander" value="' . $item['ID'] . '">Ajouter au panier</button>
-                        </form>
-                        ');
-                    print("</div>");
-            }
-            ?>
-            </ul>
-        </div>
-
-        <div id="cart-total">
-            Total: 0€
-        </div>
-
-        <div id="cart-actions">
-            <button class="checkout-button" onclick="goToCheckout()">Commander</button>
-        </div>
+            <div id="cart-actions">
+                <button class="checkout-button" type="submit" name="commander">Commander</button>
+            </div>
+        </form>
     </div>
-
-    <script src="/projet_pedago/js/panier.js"></script>
-
 </body>
-
 </html>
+
 <?php
-    include("footer.php");
+    include("footer.php");  
 ?>

@@ -7,16 +7,57 @@
 </head>
 <?php
   include ("header.php");
+
+  if (isset($_SESSION['Connexion'][0])) {
+    if ($_SESSION['Connexion'][1] == 'client') {
+        $qui = 1;
+        $id_client = $_SESSION['Connexion'][0];
+    }
+    if ($_SESSION['Connexion'][1] == 'vendeur') {
+      $qui = 2;
+      $id_vendeur = $_SESSION['Connexion'][0];
+    }
+    if ($_SESSION['Connexion'][1] == 'livreur') {
+      $qui = 3;
+      $id_livreur = $_SESSION['Connexion'][0];
+    }
+}
+
 ?>
 <body>
   <div class="container">
     <h1>Mon Compte</h1>
-    <div class="menu">
-      <a href="./commandes.php">Commandes</a>
-      <a href="./suivi_colis.php">Suivi de colis</a>
-      <a href="./Aide.php">Aide</a>
-      <a href="./mes_informations.php">Mes informations</a>
-    </div>
+    <?php 
+
+      if($qui == 1){
+
+        echo '<div class="menu">';
+        echo '<a href="./commandes.php">Commandes</a>';
+        echo '<a href="./suivi_colis.php">Suivi de colis</a>';
+        echo '<a href="./Aide.php">Aide</a>';
+        echo '<a href="./mes_informations.php">Mes informations</a>';
+        echo '</div>';
+        
+      }elseif($qui == 2){
+     
+        echo '<div class="menu">';
+        echo '<a href="./mes_produitsN.php">Mes produits</a>';
+        echo '<a href="VentesN.php">Ventes</a>';
+        echo '<a href="ExpeditionsN.php">Expéditions</a>';
+        echo '<a href="mes_informations.php">Gestion du compte</a>';
+        echo '</div>';
+
+      }elseif($qui == 3){
+
+        echo '<div class="menu">';
+        echo '<a href="./Livreur.php">Mes livraisons</a>';
+        echo '<a href="./Aide.php">Aide</a>';
+        echo '<a href="./mes_informations.php">Mes informations</a>';
+        echo '</div>';
+      }
+
+
+    ?>
   </div>
 </body>
 

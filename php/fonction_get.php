@@ -193,6 +193,9 @@ function built_tab($ID_Liv){
 function affiche_cmd($id_liv){
     global $link;
 
+    $tab_cli = [];
+    $tab_cmd = [];
+
     $sql_cmd = "SELECT * FROM commande WHERE ID_Livreur = $id_liv";
     $res_cmd = mysqli_query($link, $sql_cmd);
 
@@ -203,11 +206,32 @@ function affiche_cmd($id_liv){
     }
 
     while ($obj_cmd = mysqli_fetch_object($res_cmd)) {
-        echo "Commande n°$obj_cmd->ID :<br>";
-        echo "Client n°$obj_cmd->ID_Client<br>";
-        //echo "Valide : $obj_cmd->Valide<br>";
+        
+        if (isset($tab_cli[$obj_cmd->ID_Client])) {
+            
+            $tab_cmd = $tab_cli[$obj_cmd->ID_Client];
+        }
+        array_push($tab_cmd, $obj_cmd->ID);
+        $tab_cli[$obj_cmd->ID_Client] = $tab_cmd;
+        $tab_cmd = [];
+
+    }
+
+    foreach ($tab_cli as $key => $value) {
+
+        $sql_cli = "SELECT * FROM client WHERE ID = $key";
+        $res_cli = mysqli_query($link, $sql_cli);
+        $obj_cli = mysqli_fetch_object($res_cli);
+        $add_cli = $obj_cli->Adresse;
+
+        echo "Client n°$key : $add_cli<br>";
+        
+        foreach ($value as $cmd) {
+            echo "Commande n°$cmd <br>";
+        }
         echo "<br>";
     }
+    return $tab_cli;
 }
 
 function affiche_produit($nom){
@@ -220,22 +244,7 @@ function affiche_produit($nom){
     $req->execute();
     $res=$req->fetchAll();
     $req->closeCursor();
-    foreach($res as $produit){
-        echo "<div id='resultats'>";
-        echo "<div class='produit'>";
-        echo('<img src='.$pathprod.$produit['Img'].'>');
-        echo "<div class='description_produit'>";
-        echo "<h3>".$produit['Nom']."</h3>";
-        echo "<p>".$produit['Descript']."</p>";
-        echo "<p>".$produit['Prix']."€</p>";
-        echo "<p>".$produit['Quantite']." en stock</p>";
-        echo "<form action='' method='POST'>";
-        echo "<button class='btn' type='submit' name='commander' value=" . $produit["ID"]. ">Ajouter au panier</button>";
-        echo "</form>";
-        echo "</div>";
-        echo "</div>";
-        echo "</div>";
-    }
+    
     return $res;
 }
 
@@ -391,20 +400,63 @@ function recu_Produit_By_Vendeur($ID_Vend){
 
 function getCart($id_client){
     global $connexion;
+    
+    $ID = getIDcmd($id_client);
+    if($ID){
+        $req = $connexion->query("SELECT * from achats WHERE ID_commande = $ID");
+        $req->execute();
+        $res = $req->fetchAll();
+        $req->closeCursor();
+        return $res;
+    }else{
+        return false;
+    }
+    
+}
+
+function getIDcmd($id_client){
+    global $connexion;
+
     $req = $connexion->query("SELECT ID from commande WHERE ID_Client = '$id_client' AND Valide = '0'");
     $req->execute();
     $res = $req->fetch();
     $req->closeCursor();
-    if (!isset($res)){
+    if (!isset($res) || !$res){
         return false;
+    } else{
+        return $res['ID'];
+    }
+}
+
+function recu_Produit_By_Cmd($ID_Cmd){
+
+    global $link;
+
+    $data = [];
+    $desc = [];
+
+    $sql_data = "SELECT * FROM achats WHERE ID_commande = $ID_Cmd";
+    $res_data = mysqli_query($link, $sql_data);
+
+    while($obj = mysqli_fetch_object($res_data)){
+
+        $data[$obj->ID_produit] = $obj->quantite;
     }
 
-    $ID = $res['ID'];
-    $req = $connexion->query("SELECT * from achats WHERE ID_commande = $ID");
-    $req->execute();
-    $res = $req->fetchAll();
-    $req->closeCursor();
-    return $res;
+    foreach ($data as $key => $value) {
+
+        $sql_prod = "SELECT * FROM produit WHERE ID = $key";
+        $res_prod = mysqli_query($link, $sql_prod);
+        $obj_prod = mysqli_fetch_object($res_prod);
+
+        array_push($desc, $obj_prod->Nom);
+        array_push($desc, $value);
+
+        $data[$key] = $desc;
+        $desc = [];
+    }
+
+    return $data; // tab sous form $data[id_cmd] = [nom_prod, qtt]
 }
 
 ?>

@@ -57,7 +57,7 @@ if (isset($_SESSION['Connexion'][0])) {
                     print('<img src='.$pathprod.$item['Img'].'>');
                     print('<h2>' . $item['Nom'] . '</h2><br>');
                     print('<p>' . $item['Descript'] . '</p>');
-                    print($item['Prix'] . '€<br>');
+                    print($item['Prix'] . '€<br>'); //input "hidden"
                     print('En stock : ' . $item['Quantite'] . '<br>');
                     print('
                         <form action="/projet_pedago/php/accueil.php" method="POST">
