@@ -1,0 +1,60 @@
+#checkout-form {
+  max-width: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #f7f7f7;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+h1,
+h2 {
+  text-align: center;
+}
+
+label {
+  display: block;
+  margin-bottom: 5px;
+  font-weight: bold;
+}
+
+.form-group {
+  margin-bottom: 15px;
+}
+
+#fullname,
+#address,
+#cardnumber,
+#expiry,
+#cvv[type="text"] {
+  width: 99%;
+  padding: 10px;
+  border: 1px solid #ccc;
+  border-radius: 3px;
+}
+
+.remove-button,
+.checkout-button {
+  display: block;
+  width: 100%;
+  padding: 10px;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  color: #fff;
+  cursor: pointer;
+}
+
+.remove-button {
+  background-color: #d9534f;
+}
+
+.checkout-button {
+  background-color: #4caf50;
+}
+
+.remove-button:hover,
+.checkout-button:hover {
+  opacity: 0.9;
+}
