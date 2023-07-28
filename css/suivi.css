@@ -1,36 +1,63 @@
-.notification-container{
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 0;
+}
 
-    width: 80%;
-    height: 200px;
-    margin-top: 50px;
-    margin-left: 10%;
-    margin-bottom: 10%;
-    background-color: #fff;
-    display: flex;
-    position: relative; 
-    align-items: center;
-    justify-content: center;
-    border-radius: 10px;
-    box-shadow: 0 2px 7px #232f3e;
+.container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+}
 
+h1 {
+  margin: 0;
+}
 
-    }
-    
-    .notification{
+.shipment {
+  background-color: #fff;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  border-radius: 5px;
+  padding: 20px;
+  margin: 10px 0;
+}
 
+h2 {
+  margin-top: 0;
+}
 
-        width: 80%;
-        height: 80px; 
-        margin: 20px auto; 
-        background-color: #fff;
-        position: absolute; 
-        top: 0; 
-        left: 0; 
-        right: 0;
-        border-radius: 10px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        box-shadow: 0 2px 7px #232f3e;
-        font-family: 'Courier New', Courier, monospace;
-} 
+.delivery-info {
+  font-weight: bold;
+}
+
+.shipment p {
+  margin: 0;
+  padding: 5px 10px;
+  border-radius: 3px;
+}
+
+.shipment p:nth-child(2) {
+  background-color: #f1c40f; 
+  color: #000;
+}
+
+.shipment p:nth-child(3) {
+  background-color: #2ecc71;
+  color: #fff;
+}
+
+.shipment p:nth-child(4) {
+  background-color: #e74c3c; 
+  color: #fff;
+}
+
+a {
+  color: #007bff; 
+  text-decoration: none;
+  transition: color 0.3s;
+}
+
+a:hover {
+  color: #0056b3; 
+}

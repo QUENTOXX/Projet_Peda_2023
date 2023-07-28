@@ -4,11 +4,15 @@ body {
   font-family: Arial, sans-serif;
 }
 
+h1{
+align-content: center;
+}
+
 .Mcontainer {
   max-width: 800px;
   margin: 0 auto;
   padding: 20px;
-  display: flex;
+  display: block;
   align-items: center;
   justify-content: center;
   background-color: #fff;
@@ -38,26 +42,31 @@ body {
 .popup-content {
   position: absolute;
   top: 50%;
-  left: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
   display: block;
   width: 400px;
   height: 550px;
   background-color: #fff;
   padding: 20px;
   border-radius: 5px;
+  overflow-y: auto;
 }
 
 #info {
   width: 200px;
   height: 45px;
   background-color: #232f3e;
+  font-size: 10px;
   color: #fff;
   border: none;
   border-radius: 3px;
 }
 
 #info:hover {
-  transform: translate(0%, -10%);
+  width: 210px;
+  height: 55px;
+  font-weight: bolder;
 }
 
 #closePopup {
@@ -80,4 +89,8 @@ body {
 footer {
   position: fixed;
   bottom: 0px;
+}
+
+div{
+  margin-left: 10px;
 }

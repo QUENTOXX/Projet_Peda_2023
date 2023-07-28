@@ -1,0 +1,44 @@
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 20px;
+  background-color: #fff;
+}
+
+main {
+  height: 100%;
+  width: 100%;
+  text-align: center;
+}
+
+main h1  {
+
+    font-size: 40px;
+
+}
+
+section {
+  text-align: center;
+}
+
+section h2 {
+  font-size: 30px;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.stats-container {
+  width: 80%;
+  height: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  display: block;
+  align-items: center;
+  justify-content: center;
+  background-color: #dad9d9;
+  border-radius: 10px;
+  box-shadow: 0 2px 7px #232f3e;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  margin-left: 10%;
+}

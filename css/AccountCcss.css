@@ -18,8 +18,9 @@
 .menu a:hover {
   background-color: #f2f2f2;
 }
-
-footer {
+.footer{
+  display: flex;
   bottom: 0;
-  position: fixed;
+  margin-top: 20px;
 }
+

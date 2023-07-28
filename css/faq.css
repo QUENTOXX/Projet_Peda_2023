@@ -1,0 +1,38 @@
+body {
+    font-family: Arial, sans-serif;
+    line-height: 1.6;
+    margin: 0;
+    padding: 20px;
+    background-color: #f0f2f5;
+}
+
+h1 {
+    color: #FF9900;
+    text-align: center;
+}
+
+.faq-container {
+    max-width: 600px;
+    margin: 0 auto;
+    background-color: #fff;
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 20px;
+}
+
+.question {
+    font-weight: bold;
+    color: #0066c0;
+    cursor: pointer;
+    margin-bottom: 10px;
+}
+
+.answer {
+    color: #444;
+    margin-bottom: 20px;
+}
+
+.useful {
+    font-size: 12px;
+    color: #666;
+}
