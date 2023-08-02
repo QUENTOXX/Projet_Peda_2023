@@ -1,0 +1,105 @@
+body {
+  margin: 0;
+  padding: 0;
+  font-family: Arial, sans-serif;
+}
+
+h1{
+align-content: center;
+}
+
+.Mcontainer {
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+  display: block;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border-radius: 10px;
+  box-shadow: 0 2px 7px #232f3e;
+  margin-top: 50px;
+  margin-bottom: 50px;
+}
+
+#popup {
+  display: none;
+  background-color: rgba(0, 0, 0, 0.7);
+  position: fixed;
+  flex: center;
+  justify-content: center;
+  transform: translate(-50%, -50%);
+  width: 150%;
+  height: 150%;
+  border-radius: 3px;
+  box-shadow: 10px 2px 10px #232f3e;
+}
+
+.popup-container {
+  display: none;
+}
+
+.popup-content {
+  position: absolute;
+  top: 50%;
+  left: 60%;
+  transform: translate(-50%, -50%);
+  display: block;
+  width: 400px;
+  height: 550px;
+  background-color: #fff;
+  padding: 20px;
+  border-radius: 5px;
+  overflow-y: auto;
+}
+
+#info {
+  width: 200px;
+  height: 45px;
+  background-color: #232f3e;
+  font-size: 10px;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+}
+
+#info:hover {
+  width: 210px;
+  height: 55px;
+  font-weight: bolder;
+}
+
+#closePopup {
+  width: 200px;
+  height: 45px;
+  background-color: #232f3e;
+  color: #fff;
+  border: none;
+  border-radius: 3px;
+}
+
+.popup-content h2 {
+  margin-bottom: 15px;
+}
+
+.popup-content button {
+  margin-top: 15px;
+}
+
+
+div{
+  margin-left: 10px;
+}
+#erreur {
+  background-color : #232f3e;
+  color : #f2f2f2;
+  text-align : center;
+  font-weight : bold;
+  border : black;
+  font-size : 15px;
+  font-family : 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  line-height : 2;
+  }
+
+  main {height: 100%;
+  width: 100%;}

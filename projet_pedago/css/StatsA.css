@@ -1,0 +1,65 @@
+body {
+  font-family: Arial, sans-serif;
+  line-height: 1.6;
+  margin: 0;
+  padding: 20px;
+  background-color: #fff;
+}
+
+main {
+  height: 100%;
+  width: 100%;
+  text-align: center;
+}
+
+main h1  {
+
+    font-size: 40px;
+
+}
+
+section {
+  text-align: center;
+}
+
+section h2 {
+  font-size: 30px;
+  font-family: "Courier New", Courier, monospace;
+}
+
+.stats-container {
+  width: 20%;
+  max-width: 1200px;
+  height: 500px;
+  margin: 0 auto;
+  padding: 20px;
+  display: block;
+  align-items: center;
+  justify-content: center;
+  background-color: #fff;
+  border-radius: 4px;
+  border: 1px solid #ddd;
+  box-shadow: 0 2px 7px #232f3e;
+  margin-top: 50px;
+  margin-bottom: 50px;
+  margin-left: 40%;
+  overflow-y: auto;
+}
+
+h5{
+
+  font-size: 20px;
+  font-weight: bold;
+  
+
+}
+#erreur {
+  background-color : #232f3e;
+  color : #f2f2f2;
+  text-align : center;
+  font-weight : bold;
+  border : black;
+  font-size : 15px;
+  font-family : 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  line-height : 2;
+  }

@@ -1,0 +1,51 @@
+body {
+  font-family: Arial, sans-serif;
+  background-color: #f7f7f7;
+}
+
+.sales-container {
+  max-width: 1200px;
+  margin: 0 auto;
+  padding: 20px;
+  background-color: #fff;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+}
+
+h2 {
+  color: #ff9900;
+  border-bottom: 2px solid #ff9900;
+  padding-bottom: 5px;
+}
+
+.statistic {
+  background-color: #fff;
+  border: 1px solid #ddd;
+  padding: 10px;
+  margin-bottom: 20px;
+  box-shadow: 0 0 5px rgba(0, 0, 0, 0.1);
+  border-radius: 4px;
+}
+
+h3 {
+  color: #444;
+}
+
+main {
+  margin-top: 20px;
+}
+
+footer {
+  bottom: 0px;
+}
+#erreur {
+  background-color : #232f3e;
+  color : #f2f2f2;
+  text-align : center;
+  font-weight : bold;
+  border : black;
+  font-size : 15px;
+  font-family : 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  line-height : 2;
+  }

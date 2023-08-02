@@ -1,0 +1,98 @@
+
+body {
+  margin : 0;
+  padding : 0;
+  font-family : Arial, sans-serif;
+  background-color : #fff;
+  }
+  h2 {
+  text-align : center;
+  padding-top : 87px;
+  }
+  .container_form {
+  width : 550px;
+  padding : 28px 0 30px;
+  margin : 137px auto;
+  margin-top : 50px;
+  background : #fff;
+  border-radius : 7px;
+  box-shadow : 0 15px 35px rgb(0, 0, 0, 0.4);
+  background-color : rgb(223, 213, 213);
+  }
+  label {
+  padding-left : 15px;
+  margin : 15px;
+  padding-bottom : 10px;
+  }
+  #type {
+  width : 235px;
+  height : 30px;
+  margin-top : 15px;
+  font-size : 15px;
+  }
+  .formsign {
+  width : 250px;
+  height : 30px;
+  display : block;
+  margin-top : 10px;
+  margin-bottom : 10px;
+  margin-left : 125px;
+  border-radius : 5px;
+  padding : 10px;
+  }
+  .button {
+  display : flex;
+  justify-content : center;
+  align-items : center;
+  height : 20vh;
+  }
+  .register {
+  text-decoration : none;
+  color : rgb(255, 255, 255, 0.8);
+  background : #e47911;
+  padding : 15px 40px;
+  border-radius : 4px;
+  font-weight : normal;
+  text-transform : uppercase;
+  transition : all 0.2s ease-in-out;
+  }
+  .register:hover, .register:focus {
+  transform : translateY(-0.25em);
+  color : rgb(16, 18, 37, 0.849);
+  }
+  .login {
+  list-style-type : none;
+  text-decoration : none;
+  color : rgb(16, 18, 37, 0.849);
+  margin : 0;
+  padding : 0;
+  }
+  .a-center {
+  display : flex;
+  justify-content : center;
+  align-items : center;
+  }
+  #erreurs {
+  background-color : #232f3e;
+  color : #f2f2f2;
+  text-align : center;
+  font-weight : bold;
+  border : black;
+  font-size : 15px;
+  font-family : 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+  line-height : 2;
+  }
+  #err {
+  padding-top : 10px;
+  padding-bottom : 40px;
+  }
+  #erreur {
+    background-color : #232f3e;
+    color : #f2f2f2;
+    text-align : center;
+    font-weight : bold;
+    border : black;
+    font-size : 15px;
+    font-family : 'Gill Sans', 'Gill Sans MT', Calibri, 'Trebuchet MS', sans-serif;
+    line-height : 2;
+    }
