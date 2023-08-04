@@ -88,7 +88,7 @@ if (isset($_POST['valider'])) {
 
       
       
-        <form action="Inscription.php" method="POST">
+        <form action="inscription.php" method="POST">
 
             <label for="firstname">Votre nom</label>
             <input placeholder="Prénom" class="formsign" type="text" name="nom" id="nom">
